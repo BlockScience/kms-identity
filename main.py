@@ -3,7 +3,7 @@ import functools
 from neo4j import GraphDatabase
 
 URI = "bolt://localhost:7687"
-AUTH = ("neo4j", "_5oVUUBXGjb-1qUhHsd5ucKe5v27odqjWvt5wouNqSo")
+AUTH = ("neo4j", "password")
 
 driver = GraphDatabase.driver(URI, auth=AUTH)
 print('Connected to DB')
