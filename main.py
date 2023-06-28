@@ -72,6 +72,15 @@ class Identity:
         "MERGE (i)-[:IS]->(n)"
         result = tx.run(query, id=self.id, log=log)
 
+    @execute(WRITE)
+    def fork(tx, self, data):
+        query = "MATCH (:Identity {id: $m_id})-[:IS]->(p:Transaction) " \
+        "CREATE (i:Identity $props)-[:IS]->(n:Transaction {log: $log})-[:SUCCEEDS]->(p)"
+        peer = Identity(nanoid.generate())
+        log = f"FORK {self.id} {peer.id}"
+        data['id'] = peer.id
+        result = tx.run(query, m_id=self.id, p_id=peer.id, log=log, props=data)
+
     @classmethod
     def new(cls, data):
         identity = cls(nanoid.generate())
@@ -111,6 +120,9 @@ sys = Identity.new({'name': 'sys'})
 tag = Identity.new({'name': 'tag'})
 type = Identity.new({'name': 'type'})
 sys.add_child(tag.id)
+
+old_sys = sys.fork({'name': 'old_sys'})
+
 sys.add_child(type.id)
 
 kms = Identity.new({'name': 'KMS'})
