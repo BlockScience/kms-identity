@@ -1,12 +1,17 @@
+import functools
 from api.core import driver
+from api.config import NEO4J_DB
 
-def new_transaction(tx, *args, **kwargs):
-    print(args, kwargs)
-    # print(query, kwargs)
-    # result = tx.run(query, **kwargs)
-    # return list(result)
+def execute_read(method):
+    @functools.wraps(method)
+    def wrapper(*args, **kwargs):
+        with driver.session(database=NEO4J_DB) as session:
+            return session.execute_read(method, *args, **kwargs)
+    return wrapper
 
-def run_transaction(method, *args, **kwargs):
-    with driver.session(database="neo4j") as session:
-        result = session.execute_write(method, *args, **kwargs)
-        return result
+def execute_write(method):
+    @functools.wraps(method)
+    def wrapper(*args, **kwargs):
+        with driver.session(database=NEO4J_DB) as session:
+            return session.execute_write(method, *args, **kwargs)
+    return wrapper
