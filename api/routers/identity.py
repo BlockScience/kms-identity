@@ -1,12 +1,20 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Body, HTTPException, status
+import jsonschema, nanoid
+from jsonschema.exceptions import ValidationError
+
+from api import database, ingress, utils
+from api.schema import IDENTITY_SCHEMA
 
 router = APIRouter(
     prefix="/identity"
 )
 
 @router.post("")
-def create_identity():
-    ...
+@utils.validate_json(IDENTITY_SCHEMA)
+def create_identity(identity: dict):
+    identity["id"] = nanoid.generate()
+
+    return database.create_identity(identity)
 
 """
 API paths

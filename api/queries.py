@@ -12,8 +12,10 @@ GET_OBJECT_DEREFERENCE = \
     "MATCH (r:Reference {id: $id})<-[:HAS]-(i:Identity {type: 'controller'}) RETURN [r.uri, i.dereference] AS result"
 
 CREATE_IDENTITY = \
-    "CREATE (i:Identity {id: $id}) SET i += $props " \
-    "CREATE (i)-[:IS]->(t:Transaction {log: $log})"
+    "CREATE (i:Identity) SET i = $props " \
+    "RETURN i AS result"
+    # "CREATE (i)-[:IS]->(t:Transaction {log: $log})"
+
 
 READ_IDENTITY = \
     "MATCH (i:Identity {id: $id}) RETURN i AS result"

@@ -4,8 +4,8 @@ from api.queries import *
 
 @execute_write
 def create_object_reference(tx, obj):
-    result = tx.run(CREATE_OBJECT_REFERENCE, props=obj)
-    return list(result)
+    records = tx.run(CREATE_OBJECT_REFERENCE, props=obj)
+    return records.single().get("result", None)
 
 @execute_read
 def read_object(tx, obj_id):
@@ -20,3 +20,8 @@ def get_object_dereference(tx, obj_id):
 @execute_write
 def refresh_object(tx, obj_id, data):
     tx.run(REFRESH_OBJECT, id=obj_id, props=data)
+
+@execute_write
+def create_identity(tx, identity):
+    records = tx.run(CREATE_IDENTITY, props=identity)
+    return records.single().get("result", None)

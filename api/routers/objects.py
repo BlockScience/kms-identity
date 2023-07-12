@@ -1,22 +1,17 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException, status
 import jsonschema, nanoid
 from jsonschema.exceptions import ValidationError
 
-from api.core import driver
+from api import database, ingress, utils
 from api.schema import OBJECT_REFERENCE_SCHEMA
-from api import database, ingress
 
 router = APIRouter(
     prefix="/object"
 )
 
 @router.post("")
-def create_object(obj: dict = Body(...)):
-    try:
-        jsonschema.validate(obj, OBJECT_REFERENCE_SCHEMA)
-    except ValidationError as e:
-        return {"success": False}
-    
+@utils.validate_json(OBJECT_REFERENCE_SCHEMA)
+def create_object(obj: dict):
     obj["id"] = nanoid.generate()
 
     database.create_object_reference(obj)

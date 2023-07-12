@@ -5,3 +5,13 @@ OBJECT_REFERENCE_SCHEMA = {
     },
     "required": ["uri"]
 }
+
+IDENTITY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "type": {"type": "string"}
+    },
+    "required": ["name"]
+}
