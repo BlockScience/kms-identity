@@ -3,3 +3,5 @@ uvicorn
 neo4j
 jsonschema
 nanoid
+beautifulsoup4
+requests
