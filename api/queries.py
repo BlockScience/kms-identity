@@ -1,8 +1,8 @@
 CREATE_OBJECT_REFERENCE = \
-    "CREATE (r:Reference) SET i = $props RETURN r AS result"
+    "CREATE (r:Reference) SET r = $props RETURN r AS result"
 
 READ_OBJECT = \
-    "MATCH (r:Reference)-[:REFERS_TO]->(d) RETURN {id: r.id, uri: r.uri, data: properties(d)} AS result"
+    "MATCH (r:Reference {id: $id})-[:REFERS_TO]->(d) RETURN {id: r.id, uri: r.uri, data: properties(d)} AS result"
 
 REFRESH_OBJECT = \
     "MERGE (r:Reference {id: $id})-[:REFERS_TO]->(d:Data) " \
@@ -24,7 +24,7 @@ UPDATE_IDENTITY = \
     "MERGE (i:Identity {id: $id}) SET i += $props RETURN i AS result"
 
 DELETE_IDENTITY = \
-    "MREGE (i:Identity {id: $id}) DETACH DELETE i"
+    "MERGE (i:Identity {id: $id}) DETACH DELETE i"
 
 FORK_IDENTITY = \
     "MATCH (:Identity {id: $m_id})-[:IS]->(p:Transaction) " \

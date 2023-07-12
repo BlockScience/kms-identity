@@ -13,14 +13,10 @@ router = APIRouter(
 @utils.validate_json(OBJECT_REFERENCE_SCHEMA)
 def create_object(obj: dict):
     obj["id"] = nanoid.generate()
-
-    database.create_object_reference(obj)
-
-    return {"success": True}
+    return database.create_object_reference(obj)
 
 @router.get("/{obj_id}")
 def read_object(obj_id):
-    print('test')
     return database.read_object(obj_id)
 
 @router.put("/{obj_id}")

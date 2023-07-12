@@ -15,3 +15,12 @@ IDENTITY_SCHEMA = {
     },
     "required": ["name"]
 }
+
+UPDATE_IDENTITY_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "type": {"type": "string"}
+    }
+}
