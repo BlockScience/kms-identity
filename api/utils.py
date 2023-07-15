@@ -1,4 +1,4 @@
-import functools
+import functools, re
 import jsonschema
 from jsonschema.exceptions import ValidationError
 from fastapi import HTTPException, status
@@ -51,3 +51,9 @@ def validate_json(schema, instance=None):
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+def to_snake_case(symbol):
+        return re.sub(r"(?<!^)(?=[A-Z])", r"_", symbol).lower()
+
+def to_camel_case(symbol):
+    return ''.join(word.title() for word in symbol.split('_'))
