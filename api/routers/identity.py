@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, HTTPException, status
 import jsonschema, nanoid
 from jsonschema.exceptions import ValidationError
 
-from api import database, ingress, utils
+from api import database, utils
 from api.schema import IDENTITY_SCHEMA, UPDATE_IDENTITY_SCHEMA
 
 router = APIRouter(

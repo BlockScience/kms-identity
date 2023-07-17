@@ -20,11 +20,18 @@ class Transformer:
     def from_rid(cls, rid):
         ref = re.sub(cls.pattern_rid, cls.replace_rid, rid)
         return ref
+    
+class Url(Transformer):
+    pattern_ref = r"^(https?:\/\/[^\s/$.?#].[^\s]*)$"
+    replace_ref = r"\1"
+    pattern_rid = r"(.+)"
+    replace_rid = r"\1"
+    default_dereferencer = "html"
 
 class Slack(Transformer):
     pattern_ref = r"^https://(\w+).slack.com/archives/(\w+)/(\w+)$"
-    replace_ref = r"slack:\1/\2/\3"
-    pattern_rid = r"^slack:(\w+)/(\w+)/(\w+)$"
+    replace_ref = r"\1/\2/\3"
+    pattern_rid = r"^(\w+)/(\w+)/(\w+)$"
     replace_rid = r"https://\1.slack.com/archives/\2/\3"
 
     

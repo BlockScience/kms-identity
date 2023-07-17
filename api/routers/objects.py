@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, HTTPException, status
 import jsonschema, nanoid
 from jsonschema.exceptions import ValidationError
 
-from api import database, ingress, utils
+from api import database, dereferencers, utils
 from api.schema import OBJECT_REFERENCE_SCHEMA
 
 router = APIRouter(
@@ -22,7 +22,7 @@ def read_object(obj_id):
 @router.put("/{obj_id}")
 def update_object(obj_id):
     uri, deref_func = database.get_object_dereference(obj_id)
-    dereference = getattr(ingress, deref_func)
+    dereference = getattr(dereferencers, deref_func)
     data = dereference(uri)
     database.refresh_object(obj_id, data)
     return data

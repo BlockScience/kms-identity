@@ -1,6 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 
+def html(url):
+    page = requests.get(url)
+
+    return {
+        "text": page.content
+    }
+
 def hackmd(url):
     page = requests.get(url)
 
