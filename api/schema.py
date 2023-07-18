@@ -1,9 +1,10 @@
 OBJECT_REFERENCE_SCHEMA = {
     "type": "object",
     "properties": {
-        "uri": {"type": "string"}
+        "reference": {"type": "string"},
+        "dereferencer": {"type": "string"}
     },
-    "required": ["uri"]
+    "required": ["reference"]
 }
 
 IDENTITY_SCHEMA = {

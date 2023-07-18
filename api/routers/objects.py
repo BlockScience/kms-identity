@@ -12,7 +12,6 @@ router = APIRouter(
 @router.post("")
 @utils.validate_json(OBJECT_REFERENCE_SCHEMA)
 def create_object(obj: dict):
-    obj["id"] = nanoid.generate()
     return database.create_object_reference(obj)
 
 @router.get("/{obj_id}")
