@@ -25,8 +25,6 @@ def validate_json(schema, instance=None):
         # if using async fastapi functions, wrapper will need to be async as well
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            print(args, kwargs)
-
             nonlocal instance
 
             if not instance:
@@ -46,7 +44,7 @@ def validate_json(schema, instance=None):
             except ValidationError as e:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=str(e)
+                    detail=e.message
                 )
             return func(*args, **kwargs)
         return wrapper
