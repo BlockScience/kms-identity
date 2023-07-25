@@ -45,38 +45,39 @@ def refresh_object(tx, obj_id, data):
 @execute_write
 def create_set_relation(tx, obj):
     CREATE_SET_RELATION = \
-        "CREATE (relation:Relation:Set) SET relation = $props " \
+        "CREATE (relation:Set:Relation) SET relation = $props " \
         "WITH relation " \
         "UNWIND $member_ids AS member_id " \
         "MATCH (member) WHERE member.rid = member_id " \
-        "MERGE (relation)-[:HAS]->(member) " \
-        "RETURN COLLECT(member) AS members"
+        "CREATE (relation)-[:HAS]->(member) " \
+        "RETURN COLLECT(member.rid) AS members"
     
     member_ids = obj.pop("members")
     records = tx.run(CREATE_SET_RELATION, props=obj, member_ids=member_ids)
     result = records.single()
     
     return {
+        "rid": obj.get("rid"),
         "members": result.get("members")
     }
 
 @execute_write
 def create_directed_relation(tx, obj):
     CREATE_DIRECTED_RELATION = \
-        "CREATE (relation:Relation:Directed) SET relation = $props"
+        "CREATE (relation:Directed:Relation) SET relation = $props"
         
     CREATE_FROM_EDGES = \
-        "MATCH (relation:Relation:Directed) WHERE relation.rid = $relation_id " \
+        "MATCH (relation:Directed:Relation) WHERE relation.rid = $relation_id " \
         "UNWIND $from_ids AS from_id " \
         "MATCH (from_node) WHERE from_node.rid = from_id " \
-        "MERGE (relation)-[:FROM]->(from_node) " \
+        "CREATE (relation)-[:FROM]->(from_node) " \
         "RETURN COLLECT(from_node.rid) AS from"
         
     CREATE_TO_EDGES = \
-        "MATCH (relation:Relation:Directed) WHERE relation.rid = $relation_id " \
+        "MATCH (relation:Directed:Relation) WHERE relation.rid = $relation_id " \
         "UNWIND $to_ids AS to_id " \
         "MATCH (to_node) WHERE to_node.rid = to_id " \
-        "MERGE (relation)-[:TO]->(to_node) " \
+        "CREATE (relation)-[:TO]->(to_node) " \
         "RETURN COLLECT(to_node.rid) AS to"         
 
     relation_id = obj.get("rid")
@@ -91,10 +92,21 @@ def create_directed_relation(tx, obj):
     to_result = to_records.single()
     
     return {
+        "rid": relation_id,
         "from": from_result.get("from"),
         "to": to_result.get("to")
     }
     
+@execute_read
+def read_relation(tx, rid):
+    READ_RELATION = \
+        "MATCH (relation:Relation) WHERE relation.rid = $rid " \
+        "RETURN properties(relation) AS relation"
+    
+    records = tx.run(READ_RELATION, rid=rid)
+    result = records.single()
+
+    return result.get("relation")
 
 # Assertion Operations
 

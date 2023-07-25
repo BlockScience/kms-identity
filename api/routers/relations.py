@@ -7,7 +7,7 @@ router = APIRouter(
     prefix="/relation"
 )
 
-@router.post("")
+@router.post("/set")
 @utils.validate_json(SET_RELATION_SCHEMA)
 def create_set_relation(obj: dict):
     obj["rid"] = "internal:" + nanoid.generate()
@@ -18,3 +18,7 @@ def create_set_relation(obj: dict):
 def create_directed_relation(obj: dict):
     obj["rid"] = "internal:" + nanoid.generate()
     return database.create_directed_relation(obj)
+
+@router.get("/{rid}")
+def read_relation(rid: str):
+    return database.read_relation(rid)
