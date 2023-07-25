@@ -46,32 +46,55 @@ def refresh_object(tx, obj_id, data):
 def create_set_relation(tx, obj):
     CREATE_SET_RELATION = \
         "CREATE (relation:Relation:Set) SET relation = $props " \
-        "WITH relation, $member_ids AS member_ids " \
-        "MATCH (member:Object) WHERE member.rid IN member_ids " \
-        "CREATE (relation)-[:HAS]->(member) " \
-        "RETURN member"
+        "WITH relation " \
+        "UNWIND $member_ids AS member_id " \
+        "MATCH (member) WHERE member.rid = member_id " \
+        "MERGE (relation)-[:HAS]->(member) " \
+        "RETURN COLLECT(member) AS members"
     
     member_ids = obj.pop("members")
     records = tx.run(CREATE_SET_RELATION, props=obj, member_ids=member_ids)
-    print(list(records))
     result = records.single()
-    return result.get("result") if result else None
+    
+    return {
+        "members": result.get("members")
+    }
 
 @execute_write
 def create_directed_relation(tx, obj):
     CREATE_DIRECTED_RELATION = \
-        "CREATE (relation:Relation:Directed) SET relation = $props " \
-        "WITH relation " \
-        "MATCH (from_obj:Object) WHERE from_obj.rid IN $from_ids " \
-        "MATCH (to_obj:Object) WHERE to_obj.rid IN $to_ids " \
-        "MERGE (relation)-[:FROM]->(from_obj) " \
-        "MERGE (relation)-[:TO]->(to_obj) " \
-        "RETURN from_obj AS from, to_obj AS to"
-    
+        "CREATE (relation:Relation:Directed) SET relation = $props"
+        
+    CREATE_FROM_EDGES = \
+        "MATCH (relation:Relation:Directed) WHERE relation.rid = $relation_id " \
+        "UNWIND $from_ids AS from_id " \
+        "MATCH (from_node) WHERE from_node.rid = from_id " \
+        "MERGE (relation)-[:FROM]->(from_node) " \
+        "RETURN COLLECT(from_node.rid) AS from"
+        
+    CREATE_TO_EDGES = \
+        "MATCH (relation:Relation:Directed) WHERE relation.rid = $relation_id " \
+        "UNWIND $to_ids AS to_id " \
+        "MATCH (to_node) WHERE to_node.rid = to_id " \
+        "MERGE (relation)-[:TO]->(to_node) " \
+        "RETURN COLLECT(to_node.rid) AS to"         
+
+    relation_id = obj.get("rid")
     from_ids = obj.pop("from")
     to_ids = obj.pop("to")
-    records = tx.run(CREATE_DIRECTED_RELATION, props=obj, from_ids=from_ids, to_ids=to_ids)
 
+    tx.run(CREATE_DIRECTED_RELATION, props=obj)
+    from_records = tx.run(CREATE_FROM_EDGES, relation_id=relation_id, from_ids=from_ids)
+    to_records = tx.run(CREATE_TO_EDGES, relation_id=relation_id, to_ids=to_ids)
+
+    from_result = from_records.single()
+    to_result = to_records.single()
+    
+    return {
+        "from": from_result.get("from"),
+        "to": to_result.get("to")
+    }
+    
 
 # Assertion Operations
 
