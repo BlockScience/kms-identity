@@ -52,7 +52,10 @@ def create_undirected_relation(tx, obj):
         "CREATE (relation)-[:HAS]->(member) " \
         "RETURN COLLECT(member.rid) AS members"
     
-    member_ids = obj.pop("members")
+    relation_id = obj.get("rid")
+    # removes self edges
+    member_ids = [m for m in obj.pop("members") if m != relation_id]
+
     records = tx.run(CREATE_UNDIRECTED_RELATION, props=obj, member_ids=member_ids)
     result = records.single()
     
@@ -81,9 +84,10 @@ def create_directed_relation(tx, obj):
         "RETURN COLLECT(to_node.rid) AS to"         
 
     relation_id = obj.get("rid")
-    from_ids = obj.pop("from")
-    to_ids = obj.pop("to")
-
+    # removes self edges
+    from_ids = [m for m in obj.pop("from") if m != relation_id]
+    to_ids = [m for m in obj.pop("to") if m != relation_id]
+    
     tx.run(CREATE_DIRECTED_RELATION, props=obj)
     from_records = tx.run(CREATE_FROM_EDGES, relation_id=relation_id, from_ids=from_ids)
     to_records = tx.run(CREATE_TO_EDGES, relation_id=relation_id, to_ids=to_ids)
