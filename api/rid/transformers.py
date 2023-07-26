@@ -2,7 +2,28 @@ from abc import ABC
 from urllib.parse import urlparse
 import re
 
-# def match(symbol):
+def re_transform(pattern, replace):
+    def transform(ref):
+        return re.sub(pattern, replace, ref)
+    return transform
+
+URL_TO_SLACK = ("url", "slack")
+SLACK_TO_URL = ("slack", "url")
+
+table = {
+    ("url", "slack"): re_transform(
+        r"^https://(\w+).slack.com/archives/(\w+)/(\w+)$",
+        r"\1/\2/\3"
+    ),
+    ("slack", "url"): re_transform(
+        r"^(\w+)/(\w+)/(\w+)$",
+        r"https://\1.slack.com/archives/\2/\3"
+    )
+}
+
+def convert(transform, ref):
+    from_means, to_means = transform
+    return table[(from_means, to_means)](ref)
 
 
 class Transformer:
@@ -27,16 +48,6 @@ class Url(Transformer):
     pattern_rid = r"(.+)"
     replace_rid = r"\1"
     default_dereferencer = "html"
-
-class Slack(Transformer):
-    pattern_ref = r"^https://(\w+).slack.com/archives/(\w+)/(\w+)$"
-    replace_ref = r"\1/\2/\3"
-    pattern_rid = r"^(\w+)/(\w+)/(\w+)$"
-    replace_rid = r"https://\1.slack.com/archives/\2/\3"
-
-    
-
-
 
 # replacement = r"slack:\1/\2/\3"
 # rid = re.sub(pattern, replacement, url)
