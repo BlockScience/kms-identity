@@ -57,23 +57,3 @@ ASSERTION_SCHEMA = {
     },
     "required": ["type"]
 }
-
-IDENTITY_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "rid": {"type": "string"},
-        "name": {"type": "string"},
-        "description": {"type": "string"},
-        "type": {"type": "string"}
-    },
-    "required": ["name"]
-}
-
-UPDATE_IDENTITY_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "name": {"type": "string"},
-        "description": {"type": "string"},
-        "type": {"type": "string"}
-    }
-}
