@@ -22,3 +22,7 @@ def create_directed_relation(obj: dict):
 @router.get("/{rid}")
 def read_relation(rid: str):
     return database.read_relation(rid)
+
+@router.delete("/{rid}")
+def delete_relation(rid: str):
+    database.delete_relation(rid)

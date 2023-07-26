@@ -157,6 +157,14 @@ def read_relation(tx, rid):
             "to": to_objects
         }
     
+@execute_write
+def delete_relation(tx, rid):
+    DELETE_RELATION = \
+        "MATCH (relation:Relation) " \
+        "WHERE relation.rid = $rid " \
+        "DETACH DELETE relation"
+    
+    tx.run(DELETE_RELATION, rid=rid)
 
 # Assertion Operations
 
