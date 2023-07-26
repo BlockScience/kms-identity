@@ -100,13 +100,63 @@ def create_directed_relation(tx, obj):
 @execute_read
 def read_relation(tx, rid):
     READ_RELATION = \
-        "MATCH (relation:Relation) WHERE relation.rid = $rid " \
-        "RETURN properties(relation) AS relation"
+        "MATCH (relation:Relation) " \
+        "WHERE relation.rid = $rid " \
+        "RETURN relation"
+    
+    READ_UNDIRECTED_RELATION = \
+        "MATCH (relation:Undirected:Relation)-[:HAS]->(object) " \
+        "WHERE relation.rid = $rid " \
+        "RETURN object.rid AS object"
+    
+    READ_DIRECTED_RELATION = \
+        "MATCH (relation:Directed:Relation)-[e:TO|FROM]->(object) " \
+        "WHERE relation.rid = $rid " \
+        "RETURN type(e) AS type, object.rid AS object"
     
     records = tx.run(READ_RELATION, rid=rid)
     result = records.single()
 
-    return result.get("relation")
+    if not result:
+        return None
+    
+    relation = result.get("relation")
+
+    if "Undirected" in relation.labels:
+        member_records = tx.run(READ_UNDIRECTED_RELATION, rid=rid)
+        objects = []
+
+        for record in member_records:
+            rid = record.get("object")
+            objects.append(rid)
+
+        return {
+            **relation._properties,
+            "type": "undirected",
+            "members": objects
+        }
+
+    elif "Directed" in relation.labels:
+        member_records = tx.run(READ_DIRECTED_RELATION, rid=rid)
+        from_objects = []
+        to_objects = []
+
+        for record in member_records:
+            rid = record.get("object")
+            direction = record.get("type")
+
+            if direction == "FROM":
+                from_objects.append(rid)
+            elif direction == "TO":
+                to_objects.append(rid)
+
+        return {
+            **relation._properties,
+            "type": "directed",
+            "from": from_objects,
+            "to": to_objects
+        }
+    
 
 # Assertion Operations
 
