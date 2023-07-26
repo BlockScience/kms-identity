@@ -1,12 +1,3 @@
-OBJECT_REFERENCE_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "reference": {"type": "string"},
-        "dereferencer": {"type": "string"}
-    },
-    "required": ["reference"]
-}
-
 OBJECT_SCHEMA = {
     "type": "object",
     "properties": {
@@ -14,23 +5,6 @@ OBJECT_SCHEMA = {
         "default_action": {"type": "string"}
     },
     "required": ["rid"]
-}
-
-DIRECTED_RELATION_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "name": {"type": "string"},
-        "description": {"type": "string"},
-        "from": {
-            "type": "array",
-            "items": {"type": "string"}
-        },
-        "to": {
-            "type": "array",
-            "items": {"type": "string"}
-        }
-    },
-    "required": ["from", "to"]
 }
 
 UNDIRECTED_RELATION_SCHEMA = {
@@ -47,13 +21,52 @@ UNDIRECTED_RELATION_SCHEMA = {
     "additionalProperties": False
 }
 
-ASSERTION_SCHEMA = {
+DIRECTED_RELATION_SCHEMA = {
     "type": "object",
     "properties": {
-        "rid": {"type": "string"},
-        "type": {"type": "string"},
         "name": {"type": "string"},
-        "description": {"type": "string"}
+        "description": {"type": "string"},
+        "from": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "to": {
+            "type": "array",
+            "items": {"type": "string"}
+        }
     },
-    "required": ["type"]
+    "required": ["from", "to"],
+    "additionalProperties": False
+}
+
+UNDIRECTED_ASSERTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "members": {
+            "type": "array",
+            "items": {"type": "string"}
+        }
+    },
+    "required": [],
+    "additionalProperties": False
+}
+
+DIRECTED_ASSERTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"},
+        "from": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "to": {
+            "type": "array",
+            "items": {"type": "string"}
+        }
+    },
+    "required": [],
+    "additionalProperties": False
 }

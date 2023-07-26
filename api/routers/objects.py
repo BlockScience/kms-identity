@@ -3,7 +3,7 @@ import jsonschema, nanoid
 from jsonschema.exceptions import ValidationError
 
 from api import database, utils
-from api.schema import *
+from api.schema import OBJECT_SCHEMA
 
 router = APIRouter(
     prefix="/object"

@@ -1,7 +1,10 @@
 from fastapi import APIRouter
 import nanoid
 from api import database, utils
-from api.schema import *
+from api.schema import (
+    UNDIRECTED_RELATION_SCHEMA,
+    DIRECTED_RELATION_SCHEMA
+)
 
 router = APIRouter(
     prefix="/relation"
@@ -10,13 +13,13 @@ router = APIRouter(
 @router.post("/undirected")
 @utils.validate_json(UNDIRECTED_RELATION_SCHEMA)
 def create_undirected_relation(obj: dict):
-    obj["rid"] = "internal:" + nanoid.generate()
+    obj["rid"] = "rel:" + nanoid.generate()
     return database.create_undirected_relation(obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_RELATION_SCHEMA)
 def create_directed_relation(obj: dict):
-    obj["rid"] = "internal:" + nanoid.generate()
+    obj["rid"] = "rel:" + nanoid.generate()
     return database.create_directed_relation(obj)
 
 @router.get("/{rid}")
