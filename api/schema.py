@@ -33,7 +33,7 @@ DIRECTED_RELATION_SCHEMA = {
     "required": ["from", "to"]
 }
 
-SET_RELATION_SCHEMA = {
+UNDIRECTED_RELATION_SCHEMA = {
     "type": "object",
     "properties": {
         "name": {"type": "string"},

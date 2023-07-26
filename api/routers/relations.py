@@ -7,11 +7,11 @@ router = APIRouter(
     prefix="/relation"
 )
 
-@router.post("/set")
-@utils.validate_json(SET_RELATION_SCHEMA)
-def create_set_relation(obj: dict):
+@router.post("/undirected")
+@utils.validate_json(UNDIRECTED_RELATION_SCHEMA)
+def create_undirected_relation(obj: dict):
     obj["rid"] = "internal:" + nanoid.generate()
-    return database.create_set_relation(obj)
+    return database.create_undirected_relation(obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_RELATION_SCHEMA)

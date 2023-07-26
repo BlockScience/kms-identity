@@ -43,9 +43,9 @@ def refresh_object(tx, obj_id, data):
 # Relation Operations
 
 @execute_write
-def create_set_relation(tx, obj):
-    CREATE_SET_RELATION = \
-        "CREATE (relation:Set:Relation) SET relation = $props " \
+def create_undirected_relation(tx, obj):
+    CREATE_UNDIRECTED_RELATION = \
+        "CREATE (relation:Undirected:Relation) SET relation = $props " \
         "WITH relation " \
         "UNWIND $member_ids AS member_id " \
         "MATCH (member) WHERE member.rid = member_id " \
@@ -53,7 +53,7 @@ def create_set_relation(tx, obj):
         "RETURN COLLECT(member.rid) AS members"
     
     member_ids = obj.pop("members")
-    records = tx.run(CREATE_SET_RELATION, props=obj, member_ids=member_ids)
+    records = tx.run(CREATE_UNDIRECTED_RELATION, props=obj, member_ids=member_ids)
     result = records.single()
     
     return {
