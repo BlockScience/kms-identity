@@ -1,14 +1,17 @@
+from api.rid_lib import utils
+
 import requests
 from bs4 import BeautifulSoup
 
-def html(url):
+def html_content(url):
     page = requests.get(url)
 
     return {
         "text": page.content
     }
 
-def hackmd(url):
+def extract_hackmd(rid):
+    url = utils.transform(rid, to="url", return_rid=False)
     page = requests.get(url)
 
     try:
@@ -29,3 +32,8 @@ def hackmd(url):
     }
 
     return data
+
+table = {
+    "url": html_content,
+    "hackmd": extract_hackmd
+}

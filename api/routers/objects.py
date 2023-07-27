@@ -19,10 +19,17 @@ def create_object(obj: dict):
         transform = obj["transform"]
         rid = rid_lib.transform(
             transform["reference"],
-            (transform["from"], transform["to"])
+            from_=transform["from"], 
+            to=transform["to"]
         )
 
     print(rid)
+
+    data = rid_lib.dereference(rid)
+
+    print(rid)
+
+    return data
 
 
     # return database.create_object(obj)
