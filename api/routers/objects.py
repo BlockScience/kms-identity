@@ -4,6 +4,7 @@ from jsonschema.exceptions import ValidationError
 
 from api import database, utils
 from api.schema import OBJECT_SCHEMA
+from api import rid_lib
 
 router = APIRouter(
     prefix="/object"
@@ -12,7 +13,19 @@ router = APIRouter(
 @router.post("")
 @utils.validate_json(OBJECT_SCHEMA)
 def create_object(obj: dict):
-    return database.create_object(obj)
+    if "rid" in obj:
+        rid = obj["rid"]
+    else:
+        transform = obj["transform"]
+        rid = rid_lib.transform(
+            transform["reference"],
+            (transform["from"], transform["to"])
+        )
+
+    print(rid)
+
+
+    # return database.create_object(obj)
 
 @router.get("/{obj_id}")
 def read_object(obj_id):

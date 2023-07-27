@@ -2,9 +2,27 @@ OBJECT_SCHEMA = {
     "type": "object",
     "properties": {
         "rid": {"type": "string"},
+        "transform": {
+            "type": "object",
+            "properties": {
+                "reference": {"type": "string"},
+                "from": {"type": "string"},
+                "to": {"type": "string"}
+            },
+            "required": ["reference", "from", "to"]
+        },
         "default_action": {"type": "string"}
     },
-    "required": ["rid"]
+    "oneOf": [
+        {
+            "required": ["transform"],
+            "not": {"required": ["rid"]}
+        },
+        {
+            "required": ["rid"],
+            "not": {"required": ["transform"]}
+        }
+    ]
 }
 
 UNDIRECTED_RELATION_SCHEMA = {
