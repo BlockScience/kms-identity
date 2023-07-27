@@ -20,15 +20,17 @@ def create_object(tx, obj_id):
 @execute_write
 def refresh_object(tx, obj_id, data):
     REFRESH_OBJECT = \
-        "MERGE (o:Object {rid: $id})-[:REFERS_TO]->(d:Data) " \
+        "MERGE (o:Object {rid: $obj_id}) " \
+        "MERGE (o)-[:REFERS_TO]->(d:Data) " \
         "SET d = $props"
-    tx.run(REFRESH_OBJECT, id=obj_id, props=data)
+    tx.run(REFRESH_OBJECT, obj_id=obj_id, props=data)
 
 @execute_read
 def read_object(tx, obj_id):
     READ_OBJECT = \
-        "MATCH (o:Object {rid: $rid})-[:REFERS_TO]->(d) RETURN {rid: o.rid, data: properties(d)} AS result"
-    records = tx.run(READ_OBJECT, id=obj_id)
+        "MATCH (o:Object {rid: $obj_id})-[:REFERS_TO]->(d) " \
+        "RETURN {rid: o.rid, data: properties(d)} AS result"
+    records = tx.run(READ_OBJECT, obj_id=obj_id)
     result = records.single()
     return result.get("result") if result else None
 
