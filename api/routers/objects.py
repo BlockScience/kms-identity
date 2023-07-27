@@ -23,15 +23,9 @@ def create_object(obj: dict):
             to=transform["to"]
         )
 
-    print(rid)
-
     data = rid_lib.dereference(rid)
 
-    print(rid)
-
     return data
-
-
     # return database.create_object(obj)
 
 @router.get("/{obj_id}")
