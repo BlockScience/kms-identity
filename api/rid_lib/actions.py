@@ -3,6 +3,12 @@ from api.rid_lib import utils
 import requests
 from bs4 import BeautifulSoup
 
+def test_action(rid):
+    means, ref = utils.decompose(rid)
+    return {
+        "data": ref
+    }
+
 def html_content(url):
     page = requests.get(url)
 
@@ -35,5 +41,6 @@ def extract_hackmd(rid):
 
 table = {
     "url": html_content,
-    "hackmd": extract_hackmd
+    "hackmd": extract_hackmd,
+    "test": test_action
 }

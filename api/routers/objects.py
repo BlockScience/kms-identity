@@ -25,8 +25,10 @@ def create_object(obj: dict):
 
     data = rid_lib.dereference(rid)
 
-    return data
-    # return database.create_object(obj)
+    obj = database.create_object(rid)
+    database.refresh_object(rid, data)
+
+    return obj 
 
 @router.get("/{obj_id}")
 def read_object(obj_id):

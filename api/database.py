@@ -9,36 +9,28 @@ def drop(tx):
 # Object Operations
 
 @execute_write
-def create_object(tx, obj):
+def create_object(tx, obj_id):
     CREATE_OBJECT = \
-        "CREATE (o:Object) SET o = $props RETURN o AS result"
+        "MERGE (object:Object {rid: $obj_id}) RETURN object"
     
-    records = tx.run(CREATE_OBJECT, props=obj)
+    records = tx.run(CREATE_OBJECT, obj_id=obj_id)
     result = records.single()
-    return result.get("result") if result else None
-
-@execute_read
-def read_object(tx, obj_id):
-    READ_OBJECT = \
-        "MATCH (o:Object {id: $id})-[:REFERS_TO]->(d) RETURN {id: r.id, uri: r.uri, data: properties(d)} AS result"
-    records = tx.run(READ_OBJECT, id=obj_id)
-    result = records.single()
-    return result.get("result") if result else None
-
-@execute_read
-def get_object_dereference(tx, obj_id):
-    GET_OBJECT_DEREFERENCE = \
-        "MATCH (r:Reference {id: $id}) RETURN [r.uri, i.dereference] AS result"
-    records = tx.run(GET_OBJECT_DEREFERENCE, id=obj_id)
-    result = records.single()
-    return result.get("result") if result else None
+    return result.get("object") if result else None
 
 @execute_write
 def refresh_object(tx, obj_id, data):
     REFRESH_OBJECT = \
-        "MERGE (r:Reference {id: $id})-[:REFERS_TO]->(d:Data) " \
+        "MERGE (o:Object {rid: $id})-[:REFERS_TO]->(d:Data) " \
         "SET d = $props"
     tx.run(REFRESH_OBJECT, id=obj_id, props=data)
+
+@execute_read
+def read_object(tx, obj_id):
+    READ_OBJECT = \
+        "MATCH (o:Object {rid: $rid})-[:REFERS_TO]->(d) RETURN {rid: o.rid, data: properties(d)} AS result"
+    records = tx.run(READ_OBJECT, id=obj_id)
+    result = records.single()
+    return result.get("result") if result else None
 
 # Relation Operations
 
