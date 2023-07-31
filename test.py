@@ -44,6 +44,11 @@ asr2 = api.assertions.create_directed_assertion(obj={
     "to": [obj2["rid"]]
 })
 
+api.assertions.update_assertion(rid=asr1["rid"], obj={"name": "New Name"})
+api.assertions.update_assertion(rid=asr1["rid"], obj={"name": "New Name2"})
+api.assertions.update_assertion(rid=asr1["rid"], obj={"data": "new data"})
+
+
 rel = api.relations.read_relation(rel1["rid"])
 print(rel)
 

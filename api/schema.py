@@ -88,3 +88,35 @@ DIRECTED_ASSERTION_SCHEMA = {
     "required": [],
     "additionalProperties": False
 }
+
+UPDATE_ASSERTION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "name": {"type": "string"},
+        "description": {"type": "string"}
+    },
+    "additionalProperties": True,
+    "not": {
+        "properties": {
+            "rid": {},
+            "members": {},
+            "from": {},
+            "to": {}
+        },
+        "additionalProperties": False
+    }
+}
+
+MUTATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "add": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "remove": {
+            "type": "array",
+            "items": {"type": "string"}
+        }
+    }
+}

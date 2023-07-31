@@ -117,27 +117,52 @@ def create_undirected_assertion(tx, obj):
     member_rids = obj.pop("members")
     records = tx.run(CREATE_UNDIRECTED_ASSERTION, props=obj, member_rids=member_rids)
     result = records.single()
+
+    rid = obj.get("rid")
+    members = result.get("members")
+
+    tx.run(INIT_TRANSACTION, rid=rid, props={
+        "action": "create_undirected",
+        "data": str(obj)
+    })
     
     return {
-        "rid": obj.get("rid"),
-        "members": result.get("members")
+        "rid": rid,
+        "members": members
     }
 
 @execute_write
 def create_directed_assertion(tx, obj):     
-    assertion_rid = obj.get("rid")
+    rid = obj.get("rid")
     from_rids = obj.pop("from")
     to_rids = obj.pop("to")
 
     tx.run(CREATE_DIRECTED_ASSERTION, props=obj)
-    from_records = tx.run(CREATE_FROM_EDGES, rid=assertion_rid, from_rids=from_rids)
-    to_records = tx.run(CREATE_TO_EDGES, rid=assertion_rid, to_rids=to_rids)
+    from_records = tx.run(CREATE_FROM_EDGES, rid=rid, from_rids=from_rids)
+    to_records = tx.run(CREATE_TO_EDGES, rid=rid, to_rids=to_rids)
 
     from_result = from_records.single()
     to_result = to_records.single()
+
+    tx.run(INIT_TRANSACTION, rid=rid, props={
+        "action": "create_directed",
+        "data": str(obj)
+    })
     
     return {
-        "rid": assertion_rid,
+        "rid": rid,
         "from": from_result.get("from"),
         "to": to_result.get("to")
     }
+
+@execute_write
+def update_assertion(tx, rid, obj):
+    tx.run(UPDATE_ASSERTION, rid=rid, props=obj)
+    tx.run(ADD_TRANSACTION, rid=rid, props={
+        "action": "update",
+        "data": str(obj)
+    })
+
+# @execute_write
+# def mutate_members(tx, rid, obj):
+#     tx.run()

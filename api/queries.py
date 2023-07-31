@@ -1,11 +1,11 @@
 # Definitions
 
-OBJECT_SYMBOL = "Object"
-RELATION_SYMBOL = "Relation"
-ASSERTION_SYMBOL = "Assertion"
+OBJECT_LABEL = "Object"
+RELATION_LABEL = "Relation"
+ASSERTION_LABEL = "Assertion"
 
-DIRECTED_SYMBOL = "Directed"
-UNDIRECTED_SYMBOL = "Undirected"
+DIRECTED_LABEL = "Directed"
+UNDIRECTED_LABEL = "Undirected"
 
 # Object Operations
 
@@ -34,8 +34,8 @@ CREATE_UNDIRECTED = \
 CREATE_DIRECTED = \
     "CREATE (relation:Directed:{}) SET relation = $props"
         
-CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(RELATION_SYMBOL)
-CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(RELATION_SYMBOL)
+CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(RELATION_LABEL)
+CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(RELATION_LABEL)
 
 CREATE_FROM_EDGES = \
     "MATCH (relation:Directed) WHERE relation.rid = $rid " \
@@ -73,5 +73,28 @@ DELETE_RELATION = \
 
 # Assertion Operations
 
-CREATE_UNDIRECTED_ASSERTION = CREATE_UNDIRECTED.format(ASSERTION_SYMBOL)
-CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(ASSERTION_SYMBOL)
+CREATE_UNDIRECTED_ASSERTION = CREATE_UNDIRECTED.format(ASSERTION_LABEL)
+CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(ASSERTION_LABEL)
+
+UPDATE_ASSERTION = \
+    "MATCH (assertion:Assertion) " \
+    "WHERE assertion.rid = $rid " \
+    "SET assertion += $props"
+
+# MUTATE_UNDIRECTED_ASSERTION_MEMBERS = \
+#     "MATCH (assertion:Assertion) " \
+#     "WHERE assertion.rid = $rid " \
+#     "SET assertion "
+
+INIT_TRANSACTION = \
+    "MATCH (assertion:Assertion) " \
+    "WHERE assertion.rid = $rid " \
+    "CREATE (tx:Transaction $props)<-[:IS]-(assertion) " \
+    "RETURN tx"
+
+ADD_TRANSACTION = \
+    "MATCH (assertion:Assertion)-[r:IS]->(tx:Transaction) " \
+    "WHERE assertion.rid = $rid " \
+    "DELETE r " \
+    "CREATE (tx)<-[:PREV]-(ntx:Transaction $props)<-[:IS]-(assertion) " \
+    "RETURN ntx AS tx"
