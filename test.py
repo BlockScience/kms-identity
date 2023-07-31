@@ -33,6 +33,17 @@ rel2 = api.relations.create_directed_relation(obj={
     "to": [obj2["rid"]]
 })
 
+asr1 = api.assertions.create_undirected_assertion(obj={
+    "name": "Tag",
+    "members": [obj1["rid"], obj2["rid"], obj3["rid"]]
+})
+
+asr2 = api.assertions.create_directed_assertion(obj={
+    "name": "Class Pattern",
+    "from": [obj4["rid"], obj5["rid"]],
+    "to": [obj2["rid"]]
+})
+
 rel = api.relations.read_relation(rel1["rid"])
 print(rel)
 

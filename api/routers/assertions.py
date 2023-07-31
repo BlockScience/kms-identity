@@ -12,12 +12,12 @@ router = APIRouter(
 
 @router.post("/undirected")
 @utils.validate_json(UNDIRECTED_ASSERTION_SCHEMA)
-def create_assertion(obj: dict):
+def create_undirected_assertion(obj: dict):
     obj["rid"] = rid_lib.compose("asrt", nanoid.generate())
     return database.create_undirected_assertion(obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_ASSERTION_SCHEMA)
-def create_assertion(obj: dict):
+def create_directed_assertion(obj: dict):
     obj["rid"] = rid_lib.compose("asrt", nanoid.generate())
     return database.create_directed_assertion(obj)
