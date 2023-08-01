@@ -1,3 +1,4 @@
+import json
 from api.utils import execute_read, execute_write
 from api.queries import *
 
@@ -123,7 +124,7 @@ def create_undirected_assertion(tx, obj):
 
     tx.run(INIT_TRANSACTION, rid=rid, props={
         "action": "create_undirected",
-        "data": str(obj)
+        "data": json.dumps(obj)
     })
     
     return {
@@ -146,7 +147,7 @@ def create_directed_assertion(tx, obj):
 
     tx.run(INIT_TRANSACTION, rid=rid, props={
         "action": "create_directed",
-        "data": str(obj)
+        "data": json.dumps(obj)
     })
     
     return {
@@ -160,7 +161,7 @@ def update_assertion(tx, rid, obj):
     tx.run(UPDATE_ASSERTION, rid=rid, props=obj)
     tx.run(ADD_TRANSACTION, rid=rid, props={
         "action": "update",
-        "data": str(obj)
+        "data": json.dumps(obj)
     })
 
 @execute_write
@@ -168,8 +169,16 @@ def update_undirected_assertion_members(tx, rid, obj):
     members_to_add = obj.get("add", None)
     members_to_remove = obj.get("remove", None)
 
+    if (not members_to_add) and (not members_to_remove):
+        return
+
     if members_to_add:
         tx.run(ADD_MEMBERS_TO_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_add)
     
     if members_to_remove:
         tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_remove)
+
+    tx.run(ADD_TRANSACTION, rid=rid, props={
+        "action": "update_undirected_members",
+        "data": json.dumps(obj)
+    })
