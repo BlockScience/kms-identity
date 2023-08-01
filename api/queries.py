@@ -96,23 +96,46 @@ UPDATE_ASSERTION = """
     SET assertion += $props
 """
 
-ADD_MEMBERS_TO_UNDIRECTED_ASSERTION = """
-    MATCH (assertion:Assertion)  
+ADD_MEMBERS_TO_ASSERTION = """
+    MATCH (assertion:{}:Assertion)  
     WHERE assertion.rid = $rid  
     UNWIND $member_rids AS member_rid  
     MATCH (member) WHERE member.rid = member_rid  
-    CREATE (assertion)-[:HAS]->(member)  
+    CREATE (assertion)-[:{}]->(member)  
     RETURN COLLECT(member.rid) AS members
 """
 
-REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION = """
-    MATCH (assertion:Assertion)  
+REMOVE_MEMBERS_FROM_ASSERTION = """
+    MATCH (assertion:{}:Assertion)  
     WHERE assertion.rid = $rid  
     UNWIND $member_rids AS member_rid  
-    MATCH (assertion)-[edge:HAS]->(member) WHERE member.rid = member_rid  
+    MATCH (assertion)-[edge:{}]->(member) WHERE member.rid = member_rid  
     DELETE edge  
     RETURN COLLECT(member.rid) AS members
 """
+
+ADD_MEMBERS_TO_UNDIRECTED_ASSERTION = ADD_MEMBERS_TO_ASSERTION.format(
+    UNDIRECTED_LABEL, UNDIRECTED_MEMBER_TYPE)
+
+REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format(
+    UNDIRECTED_LABEL, UNDIRECTED_MEMBER_TYPE
+)
+
+ADD_FROM_MEMBERS_TO_DIRECTED_ASSERTION = ADD_MEMBERS_TO_ASSERTION.format(
+    DIRECTED_LABEL, DIRECTED_MEMBER_FROM_TYPE
+)
+
+ADD_TO_MEMBERS_TO_DIRECTED_ASSERTION = ADD_MEMBERS_TO_ASSERTION.format(
+    DIRECTED_LABEL, DIRECTED_MEMBER_TO_TYPE
+)
+
+REMOVE_FROM_MEMBERS_FROM_DIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format(
+    DIRECTED_LABEL, DIRECTED_MEMBER_FROM_TYPE
+)
+
+REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format(
+    DIRECTED_LABEL, DIRECTED_MEMBER_TO_TYPE
+)
 
 INIT_TRANSACTION = """
     MATCH (assertion:Assertion)  

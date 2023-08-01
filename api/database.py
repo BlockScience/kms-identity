@@ -182,3 +182,36 @@ def update_undirected_assertion_members(tx, rid, obj):
         "action": "update_undirected_members",
         "data": json.dumps(obj)
     })
+
+@execute_write
+def update_directed_assertion_members(tx, rid, obj):
+    members_to_add = obj.get("add", None)
+    members_to_remove = obj.get("remove", None)
+
+    if (not members_to_add) and (not members_to_remove):
+        return
+    
+    if members_to_add:
+        from_members_to_add = members_to_add.get("from", None)
+        to_members_to_add = members_to_add.get("to", None)
+
+        if from_members_to_add:
+            tx.run(ADD_FROM_MEMBERS_TO_DIRECTED_ASSERTION, rid=rid, member_rids=from_members_to_add)
+        
+        if to_members_to_add:
+            tx.run(ADD_TO_MEMBERS_TO_DIRECTED_ASSERTION, rid=rid, member_rids=to_members_to_add)
+
+    if members_to_remove:
+        from_members_to_remove = members_to_remove.get("from", None)
+        to_members_to_remove = members_to_remove.get("to", None)
+
+        if from_members_to_remove:
+            tx.run(REMOVE_FROM_MEMBERS_FROM_DIRECTED_ASSERTION, rid=rid, member_rids=from_members_to_remove)
+        
+        if to_members_to_remove:
+            tx.run(REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION, rid=rid, member_rids=to_members_to_remove)
+
+    tx.run(ADD_TRANSACTION, rid=rid, props={
+        "action": "update_directed_members",
+        "data": json.dumps(obj)
+    })

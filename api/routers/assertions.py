@@ -45,9 +45,8 @@ def update_assertion(rid: str, obj: dict):
 @utils.validate_json(UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA, instance="obj")
 def update_undirected_assertion_members(rid: str, obj: dict):
     return database.update_undirected_assertion_members(rid, obj)
-    print(rid, obj)
 
 @router.put("/directed/{rid}/members")
 @utils.validate_json(UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA, instance="obj")
 def update_directed_assertion_members(rid: str, obj: dict):
-    print(rid, obj)
+    return database.update_directed_assertion_members(rid, obj)
