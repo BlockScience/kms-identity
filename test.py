@@ -61,6 +61,8 @@ api.assertions.update_undirected_assertion_members(rid=asr1, obj={
     "add": [obj2, obj3]
 })
 
+api.assertions.delete_assertion(rid=asr1)
+
 api.assertions.update_directed_assertion_members(rid=asr2, obj={
     "add": {
         "from": [obj2],

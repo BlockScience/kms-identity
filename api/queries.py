@@ -137,6 +137,12 @@ REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format
     DIRECTED_LABEL, DIRECTED_MEMBER_TO_TYPE
 )
 
+DELETE_ASSERTION = """
+    MATCH (assertion:Assertion)
+    WHERE assertion.rid = $rid
+    DETACH DELETE assertion
+"""
+
 INIT_TRANSACTION = """
     MATCH (assertion:Assertion)  
     WHERE assertion.rid = $rid  

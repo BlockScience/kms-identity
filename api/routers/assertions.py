@@ -33,12 +33,12 @@ def update_assertion(rid: str, obj: dict):
 
 @router.put("/undirected/{rid}")
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")
-def update_assertion(rid: str, obj: dict):
+def update_undirected_assertion(rid: str, obj: dict):
     return database.update_assertion(rid, obj)
 
 @router.put("/directed/{rid}")
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")
-def update_assertion(rid: str, obj: dict):
+def update_directed_assertion(rid: str, obj: dict):
     return database.update_assertion(rid, obj)
 
 @router.put("/undirected/{rid}/members")
@@ -50,3 +50,16 @@ def update_undirected_assertion_members(rid: str, obj: dict):
 @utils.validate_json(UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA, instance="obj")
 def update_directed_assertion_members(rid: str, obj: dict):
     return database.update_directed_assertion_members(rid, obj)
+
+# The following three endpoints are identical but cover three different paths
+@router.delete("/{rid}")
+def delete_assertion(rid: str):
+    return database.delete_assertion(rid)
+
+@router.delete("/undirected/{rid}")
+def delete_undirected_assertion(rid: str):
+    return database.update_assertion(rid)
+
+@router.delete("/directed/{rid}")
+def delete_directed_assertion(rid: str):
+    return database.update_assertion(rid)

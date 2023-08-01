@@ -215,3 +215,11 @@ def update_directed_assertion_members(tx, rid, obj):
         "action": "update_directed_members",
         "data": json.dumps(obj)
     })
+
+@execute_write
+def delete_assertion(tx, rid):
+    tx.run(ADD_TRANSACTION, rid=rid, props={
+        "action": "delete"
+    })
+    tx.run(DELETE_ASSERTION, rid=rid)
+    
