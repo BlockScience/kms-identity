@@ -163,6 +163,13 @@ def update_assertion(tx, rid, obj):
         "data": str(obj)
     })
 
-# @execute_write
-# def mutate_members(tx, rid, obj):
-#     tx.run()
+@execute_write
+def update_undirected_assertion_members(tx, rid, obj):
+    members_to_add = obj.get("add", None)
+    members_to_remove = obj.get("remove", None)
+
+    if members_to_add:
+        tx.run(ADD_MEMBERS_TO_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_add)
+    
+    if members_to_remove:
+        tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_remove)

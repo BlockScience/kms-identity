@@ -3,9 +3,12 @@
 OBJECT_LABEL = "Object"
 RELATION_LABEL = "Relation"
 ASSERTION_LABEL = "Assertion"
-
 DIRECTED_LABEL = "Directed"
 UNDIRECTED_LABEL = "Undirected"
+
+UNDIRECTED_MEMBER_TYPE = "HAS"
+DIRECTED_MEMBER_FROM_TYPE = "FROM"
+DIRECTED_MEMBER_TO_TYPE = "TO"
 
 # Object Operations
 
@@ -81,10 +84,21 @@ UPDATE_ASSERTION = \
     "WHERE assertion.rid = $rid " \
     "SET assertion += $props"
 
-# MUTATE_UNDIRECTED_ASSERTION_MEMBERS = \
-#     "MATCH (assertion:Assertion) " \
-#     "WHERE assertion.rid = $rid " \
-#     "SET assertion "
+ADD_MEMBERS_TO_UNDIRECTED_ASSERTION = \
+    "MATCH (assertion:Assertion) " \
+    "WHERE assertion.rid = $rid " \
+    "UNWIND $member_rids AS member_rid " \
+    "MATCH (member) WHERE member.rid = member_rid " \
+    "CREATE (assertion)-[:HAS]->(member) " \
+    "RETURN COLLECT(member.rid) AS members"
+
+REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION = \
+    "MATCH (assertion:Assertion) " \
+    "WHERE assertion.rid = $rid " \
+    "UNWIND $member_rids AS member_rid " \
+    "MATCH (assertion)-[edge:HAS]->(member) WHERE member.rid = member_rid " \
+    "DELETE edge " \
+    "RETURN COLLECT(member.rid) AS members"
 
 INIT_TRANSACTION = \
     "MATCH (assertion:Assertion) " \
@@ -93,8 +107,21 @@ INIT_TRANSACTION = \
     "RETURN tx"
 
 ADD_TRANSACTION = \
-    "MATCH (assertion:Assertion)-[r:IS]->(tx:Transaction) " \
+    "MATCH (assertion:Assertion)-[edge:IS]->(tx:Transaction) " \
     "WHERE assertion.rid = $rid " \
-    "DELETE r " \
+    "DELETE edge " \
     "CREATE (tx)<-[:PREV]-(ntx:Transaction $props)<-[:IS]-(assertion) " \
     "RETURN ntx AS tx"
+
+# actions = [
+#     "create",
+#     "fork",
+#     "update",
+#     "delete",
+#     "add_member",
+#     "add_from",
+#     "add_to",
+#     "remove_member",
+#     "remove_from",
+#     "remove_to"
+# ]

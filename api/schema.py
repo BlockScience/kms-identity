@@ -107,7 +107,7 @@ UPDATE_ASSERTION_SCHEMA = {
     }
 }
 
-MUTATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA = {
+UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA = {
     "type": "object",
     "properties": {
         "add": {
@@ -117,6 +117,38 @@ MUTATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA = {
         "remove": {
             "type": "array",
             "items": {"type": "string"}
+        }
+    }
+}
+
+UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "add": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "to": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
+        },
+        "remove": {
+            "type": "object",
+            "properties": {
+                "from": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "to": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
         }
     }
 }
