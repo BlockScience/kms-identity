@@ -48,20 +48,20 @@ api.assertions.update_assertion(rid=asr1, obj={"name": "New Name"})
 api.assertions.update_assertion(rid=asr1, obj={"name": "New Name2"})
 api.assertions.update_assertion(rid=asr1, obj={"data": "new data"})
 
-api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-    "remove": [obj2, obj3]
-})
+# api.assertions.update_undirected_assertion_members(rid=asr1, obj={
+#     "remove": [obj2, obj3]
+# })
 
-api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-    "add": [obj4, obj5]
-})
+# api.assertions.update_undirected_assertion_members(rid=asr1, obj={
+#     "add": [obj4, obj5]
+# })
 
-api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-    "remove": [obj4, obj5],
-    "add": [obj2, obj3]
-})
+# api.assertions.update_undirected_assertion_members(rid=asr1, obj={
+#     "remove": [obj4, obj5],
+#     "add": [obj2, obj3]
+# })
 
-api.assertions.delete_assertion(rid=asr1)
+# api.assertions.delete_assertion(rid=asr1)
 
 api.assertions.update_directed_assertion_members(rid=asr2, obj={
     "add": {
@@ -74,6 +74,7 @@ api.assertions.update_directed_assertion_members(rid=asr2, obj={
     }
 })
 
+api.assertions.fork_assertion(forked_rid=asr1)
 
 rel = api.relations.read_relation(rel1)
 print(rel)

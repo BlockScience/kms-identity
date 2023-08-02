@@ -25,6 +25,11 @@ def create_directed_assertion(obj: dict):
     obj["rid"] = rid_lib.compose("asrt", nanoid.generate())
     return database.create_directed_assertion(obj)
 
+@router.post("/{forked_rid}/fork")
+def fork_assertion(forked_rid: str):
+    new_rid = rid_lib.compose("asrt", nanoid.generate())
+    return database.fork_assertion(forked_rid, new_rid)
+
 # The following three endpoints are identical but cover three different paths
 @router.put("/{rid}")
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")

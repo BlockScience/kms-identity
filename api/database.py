@@ -115,25 +115,28 @@ def delete_relation(tx, rid):
 
 @execute_write
 def create_undirected_assertion(tx, obj):
+    json_data = json.dumps(obj)
+    rid = obj.get("rid")
     member_rids = obj.pop("members")
+
     records = tx.run(CREATE_UNDIRECTED_ASSERTION, props=obj, member_rids=member_rids)
     result = records.single()
 
-    rid = obj.get("rid")
+    tx.run(INIT_TRANSACTION, rid=rid, props={
+        "action": TX.CREATE_UNDIRECTED,
+        "data": json_data
+    })
+
     members = result.get("members")
 
-    tx.run(INIT_TRANSACTION, rid=rid, props={
-        "action": "create_undirected",
-        "data": json.dumps(obj)
-    })
-    
     return {
         "rid": rid,
         "members": members
     }
 
 @execute_write
-def create_directed_assertion(tx, obj):     
+def create_directed_assertion(tx, obj):
+    json_data = json.dumps(obj)
     rid = obj.get("rid")
     from_rids = obj.pop("from")
     to_rids = obj.pop("to")
@@ -146,10 +149,10 @@ def create_directed_assertion(tx, obj):
     to_result = to_records.single()
 
     tx.run(INIT_TRANSACTION, rid=rid, props={
-        "action": "create_directed",
-        "data": json.dumps(obj)
+        "action": TX.CREATE_DIRECTED,
+        "data": json_data
     })
-    
+
     return {
         "rid": rid,
         "from": from_result.get("from"),
@@ -157,10 +160,71 @@ def create_directed_assertion(tx, obj):
     }
 
 @execute_write
+def fork_assertion(db_tx, forked_rid, rid):
+    tx_records = db_tx.run(READ_TRANSACTIONS, rid=forked_rid)
+
+    history = []
+
+    for record in tx_records:
+        tx = record["tx"]._properties
+
+        action = tx["action"]
+        data = tx.get("data", None)
+
+        history.append({
+            "action": action,
+            "data": json.loads(data) if data else None
+        })
+
+    history.reverse()
+
+    for tx in history:
+        action = tx["action"]
+        data = tx.get("data", None)
+
+        # overwrite rid from forked assertion
+        if "rid" in data:
+            data["rid"] = rid
+
+        match action:
+            case TX.CREATE_UNDIRECTED:
+                member_rids = data.pop("members")
+                db_tx.run(CREATE_UNDIRECTED_ASSERTION, props=data, member_rids=member_rids)
+
+            case TX.CREATE_DIRECTED:
+                from_rids = data.pop("from")
+                to_rids = data.pop("to")
+                db_tx.run(CREATE_DIRECTED_ASSERTION, props=data)
+                db_tx.run(CREATE_FROM_EDGES, rid=rid, from_rids=from_rids)
+                db_tx.run(CREATE_TO_EDGES, rid=rid, to_rids=to_rids)
+
+            case TX.UPDATE:
+                db_tx.run(UPDATE_ASSERTION, rid=rid, props=data)
+
+            case TX.UPDATE_UNDIRECTED_MEMBERS:
+                members_to_add = data.get("add", None)
+                members_to_remove = data.get("remove", None)
+
+                if members_to_add:
+                    db_tx.run(ADD_MEMBERS_TO_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_add)
+                
+                if members_to_remove:
+                    db_tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_remove)
+
+    db_tx.run(FORK_TRANSACTION, forked_rid=forked_rid, new_rid=rid, props={
+        "action": TX.FORK,
+        "data": json.dumps({
+            "rid": rid
+        })
+    })
+
+
+
+@execute_write
 def update_assertion(tx, rid, obj):
     tx.run(UPDATE_ASSERTION, rid=rid, props=obj)
     tx.run(ADD_TRANSACTION, rid=rid, props={
-        "action": "update",
+        "action": TX.UPDATE,
         "data": json.dumps(obj)
     })
 
@@ -179,7 +243,7 @@ def update_undirected_assertion_members(tx, rid, obj):
         tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_remove)
 
     tx.run(ADD_TRANSACTION, rid=rid, props={
-        "action": "update_undirected_members",
+        "action": TX.UPDATE_UNDIRECTED_MEMBERS,
         "data": json.dumps(obj)
     })
 
@@ -212,14 +276,13 @@ def update_directed_assertion_members(tx, rid, obj):
             tx.run(REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION, rid=rid, member_rids=to_members_to_remove)
 
     tx.run(ADD_TRANSACTION, rid=rid, props={
-        "action": "update_directed_members",
+        "action": TX.UPDATE_DIRECTED_MEMBERS,
         "data": json.dumps(obj)
     })
 
 @execute_write
 def delete_assertion(tx, rid):
     tx.run(ADD_TRANSACTION, rid=rid, props={
-        "action": "delete"
+        "action": TX.DELETE
     })
     tx.run(DELETE_ASSERTION, rid=rid)
-    

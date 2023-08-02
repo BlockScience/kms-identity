@@ -1,22 +1,21 @@
-from enum import Enum
-
 # Definitions
 
-class LABEL(Enum):
+class LABEL:
     OBJECT = "Object"
     RELATION = "Relation"
     ASSERTION = "Assertion"
     DIRECTED = "Directed"
     UNDIRECTED = "Undirected"
 
-class TYPE(Enum):
+class TYPE:
     UNDIRECTED_MEMBER = "HAS"
     DIRECTED_FROM_MEMBER = "FROM"
     DIRECTED_TO_MEMBER = "TO"
 
-class TX(Enum):
+class TX:
     CREATE_UNDIRECTED = "create_undirected"
     CREATE_DIRECTED = "create_directed"
+    FORK = "fork"
     UPDATE = "update"
     UPDATE_UNDIRECTED_MEMBERS = "update_undirected_members"
     UPDATE_DIRECTED_MEMBERS = "update_directed_members"
@@ -159,6 +158,13 @@ INIT_TRANSACTION = """
     MATCH (assertion:Assertion)  
     WHERE assertion.rid = $rid  
     CREATE (tx:Transaction $props)<-[:IS]-(assertion)  
+    RETURN tx
+"""
+
+FORK_TRANSACTION = """
+    MATCH (forked:Assertion {rid: $forked_rid})-[:IS]->(prev:Transaction)
+    MATCH (assertion:Assertion {rid: $new_rid})
+    CREATE (prev)<-[:PREV]-(tx:Transaction $props)<-[:IS]-(assertion)
     RETURN tx
 """
 
