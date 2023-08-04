@@ -210,6 +210,31 @@ def fork_assertion(db_tx, forked_rid, rid):
                 
                 if members_to_remove:
                     db_tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=rid, member_rids=members_to_remove)
+            
+            case TX.UPDATE_DIRECTED_MEMBERS:
+                members_to_add = data.get("add", None)
+                members_to_remove = data.get("remove", None)
+
+                if members_to_add:
+                    from_members_to_add = members_to_add.get("from", None)
+                    to_members_to_add = members_to_add.get("to", None)
+
+                    if from_members_to_add:
+                        db_tx.run(ADD_FROM_MEMBERS_TO_DIRECTED_ASSERTION, rid=rid, member_rids=from_members_to_add)
+                    
+                    if to_members_to_add:
+                        db_tx.run(ADD_TO_MEMBERS_TO_DIRECTED_ASSERTION, rid=rid, member_rids=to_members_to_add)
+
+                if members_to_remove:
+                    from_members_to_remove = members_to_remove.get("from", None)
+                    to_members_to_remove = members_to_remove.get("to", None)
+
+                    if from_members_to_remove:
+                        db_tx.run(REMOVE_FROM_MEMBERS_FROM_DIRECTED_ASSERTION, rid=rid, member_rids=from_members_to_remove)
+                    
+                    if to_members_to_remove:
+                        db_tx.run(REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION, rid=rid, member_rids=to_members_to_remove)
+
 
     db_tx.run(FORK_TRANSACTION, forked_rid=forked_rid, new_rid=rid, props={
         "action": TX.FORK,

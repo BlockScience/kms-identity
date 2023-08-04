@@ -75,6 +75,7 @@ api.assertions.update_directed_assertion_members(rid=asr2, obj={
 })
 
 api.assertions.fork_assertion(forked_rid=asr1)
+api.assertions.fork_assertion(forked_rid=asr2)
 
 rel = api.relations.read_relation(rel1)
 print(rel)
