@@ -48,18 +48,18 @@ api.assertions.update_assertion(rid=asr1, obj={"name": "New Name"})
 api.assertions.update_assertion(rid=asr1, obj={"name": "New Name2"})
 api.assertions.update_assertion(rid=asr1, obj={"data": "new data"})
 
-# api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-#     "remove": [obj2, obj3]
-# })
+api.assertions.update_undirected_assertion_members(rid=asr1, obj={
+    "remove": [obj2, obj3]
+})
 
-# api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-#     "add": [obj4, obj5]
-# })
+api.assertions.update_undirected_assertion_members(rid=asr1, obj={
+    "add": [obj4, obj5]
+})
 
-# api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-#     "remove": [obj4, obj5],
-#     "add": [obj2, obj3]
-# })
+api.assertions.update_undirected_assertion_members(rid=asr1, obj={
+    "remove": [obj4, obj5],
+    "add": [obj2, obj3]
+})
 
 # api.assertions.delete_assertion(rid=asr1)
 
