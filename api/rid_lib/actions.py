@@ -29,7 +29,8 @@ def extract_hackmd(rid):
     try:
         page.raise_for_status()
     except requests.exceptions.HTTPError:
-        return f"could not get HackMD URL ({url})", page.status_code
+        print(f"could not get HackMD URL ({url})", page.status_code)
+        return None
 
     soup = BeautifulSoup(page.content, "html.parser")
     title = soup.find(name="title").get_text()

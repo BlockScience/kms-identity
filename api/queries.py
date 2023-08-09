@@ -24,7 +24,7 @@ class TX:
 # Object Operations
 
 CREATE_OBJECT = """
-    MERGE (object:Object {rid: $rid}) RETURN object
+    MERGE (object:Object {rid: $rid}) SET object += $props RETURN object
 """
 
 READ_OBJECT = """

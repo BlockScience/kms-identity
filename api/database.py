@@ -1,5 +1,6 @@
 import json
 from api.utils import execute_read, execute_write
+from api import rid_lib
 from api.queries import *
 
 @execute_write
@@ -12,7 +13,11 @@ def drop(tx):
 
 @execute_write
 def create_object(tx, rid):
-    records = tx.run(CREATE_OBJECT, rid=rid)
+    means, reference = rid_lib.decompose(rid)
+    records = tx.run(CREATE_OBJECT, rid=rid, props={
+        "means": means,
+        "reference": reference
+    })
     result = records.single()
     return result.get("object") if result else None
 

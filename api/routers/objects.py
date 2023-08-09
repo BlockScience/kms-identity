@@ -27,7 +27,8 @@ def create_object(obj: dict):
 
     try:
         data = rid_lib.dereference(rid)
-        database.refresh_object(rid, data)
+        if data:
+            database.refresh_object(rid, data)
     except Exception as e:
         print(e)
 
