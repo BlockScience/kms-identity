@@ -12,9 +12,6 @@ def url_to_hackmd(url):
 def hackmd_to_url(id):
     return f"https://hackmd.io/{id}"
 
-URL_TO_SLACK = ("url", "slack")
-SLACK_TO_URL = ("slack", "url")
-
 table = {
     ("url", "slack"): re_transform(
         r"^https://(\w+).slack.com/archives/(\w+)/(\w+)$",

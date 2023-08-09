@@ -9,11 +9,17 @@ def test_action(rid):
         "data": ref
     }
 
-def html_content(url):
+def generic_url(url):
     page = requests.get(url)
+    page.raise_for_status()
+
+    soup = BeautifulSoup(page.content, "html.parser")
+    title = soup.find(name="title").get_text()
+    text = soup.find(name="body").get_text(' ')
 
     return {
-        "text": page.content
+        "title": title,
+        "text": text
     }
 
 def extract_hackmd(rid):
@@ -40,7 +46,7 @@ def extract_hackmd(rid):
     return data
 
 table = {
-    "url": html_content,
+    "url": generic_url,
     "hackmd": extract_hackmd,
     "test": test_action
 }

@@ -23,11 +23,15 @@ def create_object(obj: dict):
             to=transform["to"]
         )
 
-    data = rid_lib.dereference(rid)
-
     obj = database.create_object(rid)
-    database.refresh_object(rid, data)
 
+    try:
+        data = rid_lib.dereference(rid)
+        database.refresh_object(rid, data)
+    except Exception as e:
+        print(e)
+
+   
     return obj 
 
 @router.get("/{rid}")
