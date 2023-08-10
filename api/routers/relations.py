@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 import nanoid
-from api import database, utils, rid_lib
+from api import database, utils
+import rid_lib
 from api.schema import (
     UNDIRECTED_RELATION_SCHEMA,
     DIRECTED_RELATION_SCHEMA

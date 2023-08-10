@@ -1,4 +1,4 @@
-from api.rid_lib import utils
+from rid_lib import utils
 
 import requests
 from bs4 import BeautifulSoup

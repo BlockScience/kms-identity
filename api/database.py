@@ -1,6 +1,6 @@
 import json
 from api.utils import execute_read, execute_write
-from api import rid_lib
+import rid_lib
 from api.queries import *
 
 @execute_write

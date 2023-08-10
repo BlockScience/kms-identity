@@ -1,4 +1,4 @@
-from api.rid_lib import transformers, actions
+from rid_lib import transformers, actions
 
 
 def transform(r, from_=None, to=None, return_rid=True):
