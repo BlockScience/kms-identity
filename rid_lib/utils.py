@@ -1,5 +1,4 @@
-from rid_lib import transformers, actions
-
+from rid_lib import transformers, actions, exceptions
 
 def transform(r, from_=None, to=None, return_rid=True):
     if from_:
@@ -32,8 +31,12 @@ def dereference(rid):
     return data
 
 def decompose(rid):
+    # only splits on first ":", will include the rest in the second str segment
     components = rid.split(":", 1)
-    if len(components) != 2: return False
+    # if there is only one component then there was no means specified
+    if len(components) != 2: 
+        raise exceptions.MissingMeansError()
+    
     return tuple(components)
 
 def compose(means, reference):

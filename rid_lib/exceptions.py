@@ -1,0 +1,2 @@
+class MissingMeansError(Exception):
+    pass
