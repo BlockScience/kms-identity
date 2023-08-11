@@ -17,6 +17,14 @@ class RID:
 
     def __str__(self):
         return utils.compose(self.means, self.reference)
+    
+    def __repr__(self):
+        return f"RID object {(self.means, self.reference)}"
+    
+    def __eq__(self, other):
+        if isinstance(other, RID):
+            return (self.means == other.means) and (self.reference == other.reference)
+        return False
 
     @classmethod
     def from_string(cls, rid):
@@ -64,6 +72,7 @@ class TestAction(Action):
         }
 
 class TransformUrl(Action):
+    symbol = "transform_url"
     needs_context = True
     context_schema = schema.TRANSFORMER_CONTEXT_SCHEMA
     supported_means = ["url"]
@@ -74,13 +83,16 @@ class TransformUrl(Action):
         means = context["means"]
 
         if means == "slack":
-            return re.sub(
+            ref =  re.sub(
                 r"^https://(\w+).slack.com/archives/(\w+)/(\w+)$",
                 r"\1/\2/\3",
                 rid.ref)
+            
+            return RID("slack", ref)
         
         elif means == "hackmd":
-            return urlparse(rid.ref).path[1:]
+            ref = urlparse(rid.ref).path[1:]
+            return RID("hackmd", ref)
 
 
 
