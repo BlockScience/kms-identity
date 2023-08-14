@@ -1,9 +1,6 @@
-from rid_lib import utils, exceptions, schema
+from rid_lib import utils, exceptions
 import jsonschema
 from jsonschema.exceptions import ValidationError
-
-import re
-from urllib.parse import urlparse
 
 class RID:
     def __init__(self, means, reference):
@@ -60,39 +57,3 @@ class Action:
     @staticmethod
     def func(cls, rid: RID, context):
         ...
-        
-
-class TestAction(Action):
-    supported_means=["test"]
-
-    @staticmethod
-    def func(rid):
-        return {
-            "data": rid.ref
-        }
-
-class TransformUrl(Action):
-    symbol = "transform_url"
-    needs_context = True
-    context_schema = schema.TRANSFORMER_CONTEXT_SCHEMA
-    supported_means = ["url"]
-    action_type = "transformer"
-
-    @staticmethod
-    def func(rid, context):
-        means = context["means"]
-
-        if means == "slack":
-            ref =  re.sub(
-                r"^https://(\w+).slack.com/archives/(\w+)/(\w+)$",
-                r"\1/\2/\3",
-                rid.ref)
-            
-            return RID("slack", ref)
-        
-        elif means == "hackmd":
-            ref = urlparse(rid.ref).path[1:]
-            return RID("hackmd", ref)
-
-
-

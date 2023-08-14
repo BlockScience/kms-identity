@@ -9,3 +9,6 @@ class MissingContextSchemaError(Exception):
 
 class ContextSchemaValidationError(Exception):
     pass
+
+class UnsupportedMeansError(Exception):
+    pass
