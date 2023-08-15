@@ -42,6 +42,7 @@ def validate_json(schema, instance=None):
             try:
                 jsonschema.validate(kwargs[instance], schema)
             except ValidationError as e:
+                print(e.message)
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=e.message

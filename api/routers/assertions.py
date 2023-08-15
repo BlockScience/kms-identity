@@ -6,6 +6,7 @@ from api.schema import (
     UNDIRECTED_ASSERTION_SCHEMA,
     DIRECTED_ASSERTION_SCHEMA,
     UPDATE_ASSERTION_SCHEMA,
+    UPDATE_ASSERTION_DEFINITION_SCHEMA,
     UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA,
     UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA
 )
@@ -46,6 +47,24 @@ def update_undirected_assertion(rid: str, obj: dict):
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")
 def update_directed_assertion(rid: str, obj: dict):
     return database.update_assertion(rid, obj)
+
+
+# The following three endpoints are identical but cover three different paths
+@router.put("/{rid}/definition")
+@utils.validate_json(UPDATE_ASSERTION_DEFINITION_SCHEMA, instance="obj")
+def update_assertion_definition(rid: str, obj: dict):
+    return database.update_assertion_definition(rid, obj)
+
+@router.put("/undirected/{rid}/definition")
+@utils.validate_json(UPDATE_ASSERTION_DEFINITION_SCHEMA, instance="obj")
+def update_undirected_assertion_definition(rid: str, obj: dict):
+    return database.update_assertion_definition(rid, obj)
+
+@router.put("/directed/{rid}/definition")
+@utils.validate_json(UPDATE_ASSERTION_DEFINITION_SCHEMA, instance="obj")
+def update_directed_assertion_definition(rid: str, obj: dict):
+    return database.update_assertion_definition(rid, obj)
+
 
 @router.put("/undirected/{rid}/members")
 @utils.validate_json(UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA, instance="obj")

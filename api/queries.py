@@ -60,7 +60,7 @@ CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(LABEL.RELATION)
 
 SET_DEFINITION = """
     MATCH (relation:Relation|Assertion) WHERE relation.rid = $rid
-    MATCH (definition:Object) WHERE definition.rid = $definition_rid
+    MATCH (definition) WHERE definition.rid = $definition_rid
     MERGE (relation)-[:DEFINED_BY]->(definition)
     RETURN definition.rid AS definition
 """
@@ -117,9 +117,8 @@ UPDATE_ASSERTION = """
 """
 
 REMOVE_DEFINITION = """
-    MATCH (relation:Assertion) WHERE relation.rid = $rid
-    MATCH (definition:Object) WHERE definition.rid = $definition_rid
-    MERGE (relation)-[edge:DEFINED_BY]->(definition)
+    MATCH (assertion:Assertion)-[edge:DEFINED_BY]->(definition)
+    WHERE assertion.rid = $rid
     DELETE edge
 """
 

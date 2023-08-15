@@ -135,12 +135,16 @@ def create_undirected_assertion(tx, obj):
     records = tx.run(CREATE_UNDIRECTED_ASSERTION, props=obj, member_rids=member_rids)
     result = records.single()
 
+    members = result.get("members")
+
     tx.run(INIT_TRANSACTION, rid=rid, props={
         "action": TX.CREATE_UNDIRECTED,
         "data": json_data
     })
 
-    members = result.get("members")
+    definition_rid = obj.get("definition", None)
+    if definition_rid and (definition_rid != rid):
+        tx.run(SET_DEFINITION, rid=rid, definition_rid=definition_rid)
 
     return {
         "rid": rid,
@@ -160,6 +164,10 @@ def create_directed_assertion(tx, obj):
 
     from_result = from_records.single()
     to_result = to_records.single()
+
+    definition_rid = obj.get("definition", None)
+    if definition_rid and (definition_rid != rid):
+        tx.run(SET_DEFINITION, rid=rid, definition_rid=definition_rid)
 
     tx.run(INIT_TRANSACTION, rid=rid, props={
         "action": TX.CREATE_DIRECTED,
@@ -256,13 +264,25 @@ def fork_assertion(db_tx, forked_rid, rid):
         })
     })
 
-
-
 @execute_write
 def update_assertion(tx, rid, obj):
     tx.run(UPDATE_ASSERTION, rid=rid, props=obj)
     tx.run(ADD_TRANSACTION, rid=rid, props={
         "action": TX.UPDATE,
+        "data": json.dumps(obj)
+    })
+
+@execute_write
+def update_assertion_definition(tx, rid, obj):
+    definition = obj.get("definition")
+
+    if definition:
+        tx.run(SET_DEFINITION, rid=rid, definition_rid=definition)
+    else:
+        tx.run(REMOVE_DEFINITION, rid=rid)
+
+    tx.run(ADD_TRANSACTION, rid=rid, props={
+        "action": TX.UPDATE_DEFINITION,
         "data": json.dumps(obj)
     })
 
