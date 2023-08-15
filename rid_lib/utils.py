@@ -1,46 +1,30 @@
 from rid_lib import exceptions
+from rid_lib import actions
 
-transformers = None
-actions = None
+def transform(rid, means):
+    available_actions = actions.table.get(rid.means, None)
 
-def transform(r, from_=None, to=None, return_rid=True):
-    if from_:
-        from_means = from_
-        reference = r
-    else:
-        # assume input is rid and infer from_means
-        from_means, reference = decompose(r)
+    if not available_actions:
+        raise Exception(f"No available actions found for '{rid.means}'")
     
-    transformer = transformers.table.get((from_means, to), None)
+    transform_action = available_actions.get("transform", None)
 
-    if not transformer:
-        raise Exception(f"Transformer for '{from_means}' -> '{to}' not found")
+    if not transform_action:
+        raise Exception(f"Transform action for '{rid.means}' not found")
 
-    new_reference = transformer(reference)
+    return transform_action.run(rid, context={
+        "means": means
+    })
     
-    if return_rid:
-        return compose(to, new_reference)
-    else:
-        return new_reference
-
 def dereference(rid):
-    means, reference = decompose(rid)
+    available_actions = actions.table.get(rid.means, None)
 
-    action = actions.table.get(means, None)
-    if not action: 
-        raise Exception(f"No action found for means '{means}'")
+    if not available_actions: 
+        raise Exception(f"No available action found for means '{rid.means}'")
     
-    data = action(rid)
-    return data
+    dereference_action = available_actions.get("dereference", None)
 
-def decompose(rid):
-    # only splits on first ":", will include the rest in the second str segment
-    components = rid.split(":", 1)
-    # if there is only one component then there was no means specified
-    if len(components) != 2: 
-        raise exceptions.MissingMeansError()
+    if not dereference_action:
+        raise Exception(f"Reference action for '{rid.means}' not found")
     
-    return tuple(components)
-
-def compose(means, reference):
-    return f"{means}:{reference}"
+    return dereference_action.run(rid)

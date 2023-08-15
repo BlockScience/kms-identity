@@ -47,3 +47,7 @@ class DereferenceUrl(Action):
             "text": text
         }
 
+table = {
+    "transform": TransformUrl,
+    "dereference": DereferenceUrl
+}
