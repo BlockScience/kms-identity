@@ -11,12 +11,14 @@ class TYPE:
     UNDIRECTED_MEMBER = "HAS"
     DIRECTED_FROM_MEMBER = "FROM"
     DIRECTED_TO_MEMBER = "TO"
+    DEFINITION = "DEFINED_BY"
 
 class TX:
     CREATE_UNDIRECTED = "create_undirected"
     CREATE_DIRECTED = "create_directed"
     FORK = "fork"
     UPDATE = "update"
+    UPDATE_DEFINITION = "update_definition"
     UPDATE_UNDIRECTED_MEMBERS = "update_undirected_members"
     UPDATE_DIRECTED_MEMBERS = "update_directed_members"
     DELETE = "delete"
@@ -55,6 +57,13 @@ CREATE_DIRECTED = """
       
 CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(LABEL.RELATION)
 CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(LABEL.RELATION)
+
+SET_DEFINITION = """
+    MATCH (relation:Relation|Assertion) WHERE relation.rid = $rid
+    MATCH (definition:Object) WHERE definition.rid = $definition_rid
+    MERGE (relation)-[:DEFINED_BY]->(definition)
+    RETURN definition.rid AS definition
+"""
 
 CREATE_FROM_EDGES = """
     MATCH (relation:Directed) WHERE relation.rid = $rid  
@@ -105,6 +114,13 @@ UPDATE_ASSERTION = """
     MATCH (assertion:Assertion)  
     WHERE assertion.rid = $rid  
     SET assertion += $props
+"""
+
+REMOVE_DEFINITION = """
+    MATCH (relation:Assertion) WHERE relation.rid = $rid
+    MATCH (definition:Object) WHERE definition.rid = $definition_rid
+    MERGE (relation)-[edge:DEFINED_BY]->(definition)
+    DELETE edge
 """
 
 ADD_MEMBERS_TO_ASSERTION = """

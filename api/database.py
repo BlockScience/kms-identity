@@ -35,12 +35,16 @@ def read_object(tx, rid):
 
 @execute_write
 def create_undirected_relation(tx, obj):
-    relation_id = obj.get("rid")
+    relation_rid = obj.get("rid")
     # removes self edges
-    member_rids = [m for m in obj.pop("members") if m != relation_id]
+    member_rids = [m for m in obj.pop("members") if m != relation_rid]
 
     records = tx.run(CREATE_UNDIRECTED_RELATION, props=obj, member_rids=member_rids)
     result = records.single()
+
+    definition_rid = obj.get("definition", None)
+    if definition_rid and (definition_rid != relation_rid):
+        tx.run(SET_DEFINITION, rid=relation_rid, definition_rid=definition_rid)
     
     return {
         "rid": obj.get("rid"),
@@ -60,6 +64,10 @@ def create_directed_relation(tx, obj):
 
     from_result = from_records.single()
     to_result = to_records.single()
+
+    definition_rid = obj.get("definition", None)
+    if definition_rid and (definition_rid != relation_rid):
+        tx.run(SET_DEFINITION, rid=relation_rid, definition_rid=definition_rid)
     
     return {
         "rid": relation_rid,
