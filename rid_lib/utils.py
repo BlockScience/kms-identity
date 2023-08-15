@@ -1,4 +1,7 @@
-from rid_lib import transformers, actions, exceptions
+from rid_lib import exceptions
+
+transformers = None
+actions = None
 
 def transform(r, from_=None, to=None, return_rid=True):
     if from_:

@@ -1,10 +1,9 @@
-from fastapi import APIRouter, Body, HTTPException, status
-import jsonschema, nanoid
-from jsonschema.exceptions import ValidationError
+from fastapi import APIRouter
 
 from api import database, utils
 from api.schema import OBJECT_SCHEMA
 import rid_lib
+from rid_lib import RID
 
 router = APIRouter(
     prefix="/object"
@@ -13,15 +12,18 @@ router = APIRouter(
 @router.post("")
 @utils.validate_json(OBJECT_SCHEMA)
 def create_object(obj: dict):
-    if "rid" in obj:
-        rid = obj["rid"]
+    rid_field = obj["rid"]
+    transform = obj.get("transform", None)
+
+    if type(rid_field) == str:
+        rid = RID.from_string(rid_field)
+    elif type(rid_field) == dict:
+        rid = RID(**rid_field)
     else:
-        transform = obj["transform"]
-        rid = rid_lib.transform(
-            transform["reference"],
-            from_=transform["from"], 
-            to=transform["to"]
-        )
+        return "Invalid RID format (this shouldn't happen)"
+    
+    if transform:
+        rid = rid_lib.transform(rid, transform)
 
     obj = database.create_object(rid)
 

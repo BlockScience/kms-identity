@@ -11,9 +11,13 @@ class RID:
     @property
     def ref(self):
         return self.reference
+    
+    @property
+    def string(self):
+        return str(self)
 
     def __str__(self):
-        return utils.compose(self.means, self.reference)
+        return self.means + ":" + self.reference
     
     def __repr__(self):
         return f"RID object {(self.means, self.reference)}"
@@ -24,8 +28,14 @@ class RID:
         return False
 
     @classmethod
-    def from_string(cls, rid):
-        means, reference = utils.decompose(rid)
+    def from_string(cls, rid_str):
+        # only splits on first ":", will include the rest in the second str segment
+        components = rid_str.split(":", 1)
+        # if there is only one component then there was no means specified
+        if len(components) != 2: 
+            raise exceptions.MissingMeansError()
+        
+        means, reference = components
         return cls(means, reference)
 
 class Action:

@@ -1,4 +1,4 @@
-from rid_lib.means import *
+from rid_lib.actions import *
 
 {
     "hackmd": {
