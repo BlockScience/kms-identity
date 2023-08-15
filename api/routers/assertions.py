@@ -18,18 +18,18 @@ router = APIRouter(
 @router.post("/undirected")
 @utils.validate_json(UNDIRECTED_ASSERTION_SCHEMA)
 def create_undirected_assertion(obj: dict):
-    obj["rid"] = RID("asrt", nanoid.generate())
+    obj["rid"] = RID("asrt", nanoid.generate()).string
     return database.create_undirected_assertion(obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_ASSERTION_SCHEMA)
 def create_directed_assertion(obj: dict):
-    obj["rid"] = RID("asrt", nanoid.generate())
+    obj["rid"] = RID("asrt", nanoid.generate()).string
     return database.create_directed_assertion(obj)
 
 @router.post("/{forked_rid}/fork")
 def fork_assertion(forked_rid: str):
-    new_rid = RID("asrt", nanoid.generate())
+    new_rid = RID("asrt", nanoid.generate()).string
     return database.fork_assertion(forked_rid, new_rid)
 
 # The following three endpoints are identical but cover three different paths

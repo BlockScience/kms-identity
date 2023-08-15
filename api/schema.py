@@ -5,6 +5,10 @@ OBJECT_SCHEMA = {
             "oneOf": [
                 {"type": "string"},
                 {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                {
                     "type": "object",
                     "properties": {
                         "means": {"type": "string"},

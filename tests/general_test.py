@@ -2,24 +2,27 @@ import api
 
 api.database.drop()
 
-obj1 = api.objects.create_object(obj={"transform": {
-        "reference": "https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view",
-        "from": "url",
-        "to": "hackmd"
-    }})["rid"]
-obj2 = api.objects.create_object(obj={"transform": {
-        "reference": "https://hackmd.io/uUm16q1oQDmN8T0m9FABNA",
-        "from": "url",
-        "to": "hackmd"
-    }})["rid"]
-obj3 = api.objects.create_object(obj={"transform": {
-        "reference": "https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw",
-        "from": "url",
-        "to": "hackmd"
-    }})["rid"]
+obj1 = api.objects.create_object(obj={
+        "rid": "url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view",
+        "transform": "hackmd"
+    })["rid"]
+
+obj2 = api.objects.create_object(obj={
+        "rid": ["url", "https://hackmd.io/uUm16q1oQDmN8T0m9FABNA"],
+        "transform": "hackmd"
+    })["rid"]
+obj3 = api.objects.create_object(obj={
+        "rid": {
+            "means": "url",
+            "reference": "https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw"
+        },
+        "transform": "hackmd"
+    })["rid"]
 
 obj4 = api.objects.create_object(obj={"rid": "test:one"})["rid"]
 obj5 = api.objects.create_object(obj={"rid": "test:two"})["rid"]
+
+print(obj1, obj2, obj3, obj4, obj5)
 
 
 rel1 = api.relations.create_undirected_relation(obj={

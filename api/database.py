@@ -15,7 +15,7 @@ def drop(tx):
 @execute_write
 def create_object(tx, rid):
     rid = RID.from_string(rid)
-    records = tx.run(CREATE_OBJECT, rid=rid, props={
+    records = tx.run(CREATE_OBJECT, rid=rid.string, props={
         "means": rid.means,
         "reference": rid.reference
     })

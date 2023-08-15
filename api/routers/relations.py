@@ -14,13 +14,13 @@ router = APIRouter(
 @router.post("/undirected")
 @utils.validate_json(UNDIRECTED_RELATION_SCHEMA)
 def create_undirected_relation(obj: dict):
-    obj["rid"] = RID("rel", nanoid.generate())
+    obj["rid"] = RID("rel", nanoid.generate()).string
     return database.create_undirected_relation(obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_RELATION_SCHEMA)
 def create_directed_relation(obj: dict):
-    obj["rid"] = RID("rel", nanoid.generate())
+    obj["rid"] = RID("rel", nanoid.generate()).string
     return database.create_directed_relation(obj)
 
 @router.get("/{rid}")

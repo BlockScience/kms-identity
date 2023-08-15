@@ -17,24 +17,25 @@ def create_object(obj: dict):
 
     if type(rid_field) == str:
         rid = RID.from_string(rid_field)
+    elif type(rid_field) == list:
+        rid = RID(*rid_field)
     elif type(rid_field) == dict:
         rid = RID(**rid_field)
     else:
         return "Invalid RID format (this shouldn't happen)"
     
     if transform:
-        rid = rid_lib.transform(rid, transform)
+        rid = rid_lib.utils.transform(rid, transform)
 
-    obj = database.create_object(rid)
+    obj = database.create_object(rid.string)
 
     try:
-        data = rid_lib.dereference(rid)
+        data = rid_lib.utils.dereference(rid)
         if data:
-            database.refresh_object(rid, data)
+            database.refresh_object(rid.string, data)
     except Exception as e:
         print(e)
 
-   
     return obj 
 
 @router.get("/{rid}")
