@@ -4,6 +4,7 @@ from jsonschema.exceptions import ValidationError
 from fastapi import HTTPException, status
 from api.core import driver
 from api.config import NEO4J_DB
+from api.exceptions import *
 
 def execute_read(func):
     @functools.wraps(func)
@@ -31,13 +32,13 @@ def validate_json(schema, instance=None):
                 instance = next(iter(kwargs.keys()), None)
 
             if not instance:
-                raise Exception("Instance is missing from function params")
+                raise MissingInstanceError
 
             if instance not in kwargs:
-                raise Exception(f"Instance name '{instance}' not found in function params")
+                raise InstanceNotFoundError(f"Instance name '{instance}' not found in function params")
 
             if type(kwargs[instance]) is not dict:
-                raise Exception("Instance is not of type 'dict'")
+                raise InstanceValueError("Instance is not of type 'dict'")
             
             try:
                 jsonschema.validate(kwargs[instance], schema)
