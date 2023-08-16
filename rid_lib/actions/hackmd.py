@@ -1,11 +1,10 @@
-from rid_lib.core import Action, RID
+from rid_lib.core import ContextualAction, Action, RID
 from rid_lib.schema import TRANSFORMER_CONTEXT_SCHEMA
 
 import requests
 from bs4 import BeautifulSoup
 
-class TransformHackmd(Action):
-    needs_context = True
+class TransformHackmd(ContextualAction):
     context_schema = TRANSFORMER_CONTEXT_SCHEMA
 
     @staticmethod

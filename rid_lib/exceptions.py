@@ -1,3 +1,6 @@
+class MissingRIDError(Exception):
+    pass
+
 class MissingMeansError(Exception):
     pass
 

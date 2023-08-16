@@ -1,4 +1,5 @@
-from rid_lib import exceptions
+from rid_lib.exceptions import *
+from abc import ABC, abstractmethod
 import jsonschema
 from jsonschema.exceptions import ValidationError
 
@@ -37,35 +38,47 @@ class RID:
         components = rid_str.split(":", 1)
         # if there is only one component then there was no means specified
         if len(components) != 2: 
-            raise exceptions.MissingMeansError()
+            raise MissingMeansError
         
         means, reference = components
         return cls(means, reference)
 
-class Action:
-    needs_context = False
+
+class Action(ABC):
+    requires_rid = True
+    requires_context = False
     context_schema = None
 
     @classmethod
-    def run(cls, rid: RID, context=None):
-        # if rid.means not in cls.supported_means:
-        #     raise exceptions.UnsupportedMeansError
+    def run(cls, rid=None, context=None):
+        if cls.requires_rid:
+            if not rid:
+                raise MissingRIDError
+        else:
+            return cls.func()
 
-        if cls.needs_context:
+        if cls.requires_context:
             if not context:
-                raise exceptions.MissingContextError
+                raise MissingContextError
             
             if not cls.context_schema:
-                raise exceptions.MissingContextSchemaError
+                raise MissingContextSchemaError
             
             try:
                 jsonschema.validate(context, cls.context_schema)
             except ValidationError as e:
-                raise exceptions.ContextSchemaValidationError(e.message)
+                raise ContextSchemaValidationError(e.message)
 
             return cls.func(rid, context)
         return cls.func(rid)
 
     @staticmethod
-    def func(cls, rid: RID, context):
-        ...
+    @abstractmethod
+    def func(rid, context):
+        raise NotImplementedError
+    
+class ContextualAction(Action):
+    requires_context = True
+
+class ConstructorAction(Action):
+    requires_rid = False

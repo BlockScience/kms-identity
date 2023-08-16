@@ -1,13 +1,11 @@
-from rid_lib.core import Action, RID
+from rid_lib.core import ContextualAction, Action, RID
 from rid_lib.schema import TRANSFORMER_CONTEXT_SCHEMA
 
 import re, requests
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
-class TransformUrl(Action):
-    symbol = "transform_url"
-    needs_context = True
+class TransformUrl(ContextualAction):
     context_schema = TRANSFORMER_CONTEXT_SCHEMA
 
     @staticmethod
