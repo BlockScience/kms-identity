@@ -83,8 +83,8 @@ def delete_assertion(rid: str):
 
 @router.delete("/undirected/{rid}")
 def delete_undirected_assertion(rid: str):
-    return database.update_assertion(rid)
+    return database.delete_assertion(rid)
 
 @router.delete("/directed/{rid}")
 def delete_directed_assertion(rid: str):
-    return database.update_assertion(rid)
+    return database.delete_assertion(rid)
