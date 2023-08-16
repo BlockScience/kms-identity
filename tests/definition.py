@@ -2,17 +2,15 @@ import api
 
 api.database.drop()
 
-definition1 = api.objects.create_object(obj={"transform": {
-        "reference": "https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view",
-        "from": "url",
-        "to": "hackmd"
-    }})["rid"]
+definition1 = api.objects.create_object(obj={
+        "rid": "url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view",
+        "transform": "hackmd"
+    })["rid"]
 
-definition2 = api.objects.create_object(obj={"transform": {
-        "reference": "https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw",
-        "from": "url",
-        "to": "hackmd"
-    }})["rid"]
+definition2 = api.objects.create_object(obj={
+        "rid": "url:https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw",
+        "transform": "hackmd"
+    })["rid"]
 
 dummy1 = api.objects.create_object(obj={
     "rid": "dummy:1"

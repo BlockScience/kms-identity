@@ -226,11 +226,11 @@ api.database.drop()
 
 for url in urls:
     obj = api.objects.create_object(obj={
-        "transform": {
+        "rid": {
             "reference": url,
-            "from": "url",
-            "to": "hackmd"
-        }
+            "means": "url"
+        },
+        "transform": "hackmd"
     })["rid"]
 
     print(obj)

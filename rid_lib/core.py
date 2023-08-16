@@ -15,6 +15,10 @@ class RID:
     @property
     def string(self):
         return str(self)
+    
+    @property
+    def dict(self):
+        return self.__dict__
 
     def __str__(self):
         return self.means + ":" + self.reference

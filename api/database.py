@@ -15,12 +15,9 @@ def drop(tx):
 @execute_write
 def create_object(tx, rid):
     rid = RID.from_string(rid)
-    records = tx.run(CREATE_OBJECT, rid=rid.string, props={
-        "means": rid.means,
-        "reference": rid.reference
-    })
+    records = tx.run(CREATE_OBJECT, rid=rid.string, props=rid.dict)
     result = records.single()
-    return result.get("object") if result else None
+    return result.get("object", None)
 
 @execute_write
 def refresh_object(tx, rid, data):
@@ -30,7 +27,7 @@ def refresh_object(tx, rid, data):
 def read_object(tx, rid):
     records = tx.run(READ_OBJECT, rid=rid)
     result = records.single()
-    return result.get("result") if result else None
+    return result.get("result", None)
 
 # Relation Operations
 

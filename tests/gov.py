@@ -23,11 +23,11 @@ action2 = api.objects.create_object(obj={
 })["rid"]
 
 working_doc = api.objects.create_object(obj={
-    "transform": {
+    "rid": {
         "reference": "https://hackmd.io/TBxOcWn_SpWEEcx_t_9GWw?view",
-        "from": "url",
-        "to": "hackmd"
-    }
+        "means": "url"
+    },
+    "transform": "hackmd"
 })["rid"]
 
 assertion = api.assertions.create_undirected_assertion(obj={
