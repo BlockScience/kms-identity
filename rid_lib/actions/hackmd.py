@@ -1,14 +1,12 @@
 from rid_lib.core import Action, RID
-from rid_lib import schema
+from rid_lib.schema import TRANSFORMER_CONTEXT_SCHEMA
 
 import requests
 from bs4 import BeautifulSoup
 
 class TransformHackmd(Action):
     needs_context = True
-    context_schema = schema.TRANSFORMER_CONTEXT_SCHEMA
-    supported_means = ["hackmd"]
-    action_type = "transform"
+    context_schema = TRANSFORMER_CONTEXT_SCHEMA
 
     @staticmethod
     def func(rid, context):
@@ -19,8 +17,6 @@ class TransformHackmd(Action):
             return RID("url", ref)
 
 class DereferenceHackmd(Action):
-    supported_means = ["hackmd"]
-    action_type = "dereference"
 
     @staticmethod
     def func(rid):

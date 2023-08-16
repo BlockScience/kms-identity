@@ -45,13 +45,11 @@ class RID:
 class Action:
     needs_context = False
     context_schema = None
-    supported_means = []
-    action_type = None
 
     @classmethod
     def run(cls, rid: RID, context=None):
-        if rid.means not in cls.supported_means:
-            raise exceptions.UnsupportedMeansError
+        # if rid.means not in cls.supported_means:
+        #     raise exceptions.UnsupportedMeansError
 
         if cls.needs_context:
             if not context:
