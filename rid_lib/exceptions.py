@@ -12,3 +12,9 @@ class ContextSchemaValidationError(Exception):
 
 class UnsupportedMeansError(Exception):
     pass
+
+class NoAvailableActionsError(Exception):
+    pass
+
+class ActionNotFoundError(Exception):
+    pass
