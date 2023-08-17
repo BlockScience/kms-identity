@@ -1,8 +1,8 @@
 from rid_lib.core import RID
-from rid_lib.actions.assertion import UpdateAssertion
+from rid_lib.functions.assertion import UpdateAssertion
 
 
-assertion = RID.from_string("asrt:uIJ_3qoSLtVTmjAxeR1xL")
+assertion = RID.from_string("asrt:HsSLHzsNcYy2Wahi_TFs8")
 
 resp = UpdateAssertion.run(assertion, {"name": "New Name"})
 

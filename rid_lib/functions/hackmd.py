@@ -41,8 +41,3 @@ class DereferenceHackmd(Action):
             "title": title,
             "text": text
         }
-    
-table = {
-    "transform": TransformHackmd,
-    "dereference": DereferenceHackmd
-}

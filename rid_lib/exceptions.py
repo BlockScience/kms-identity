@@ -1,7 +1,7 @@
-class MissingRIDError(Exception):
+class IncompleteRIDError(Exception):
     pass
 
-class MissingMeansError(Exception):
+class MissingRIDError(Exception):
     pass
 
 class MissingContextError(Exception):
@@ -13,10 +13,7 @@ class MissingContextSchemaError(Exception):
 class ContextSchemaValidationError(Exception):
     pass
 
-class UnsupportedMeansError(Exception):
-    pass
-
-class NoAvailableActionsError(Exception):
+class MeansNotFoundError(Exception):
     pass
 
 class ActionNotFoundError(Exception):

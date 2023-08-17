@@ -7,7 +7,3 @@ class TestAction(Action):
         return {
             "data": rid.ref
         }
-    
-table = {
-    "dereference": TestAction
-}

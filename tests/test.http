@@ -11,4 +11,4 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/object/hackmd:uUm16q1oQDmN8T0m9FABNA HTTP/1.1
+POST http://localhost:8000/hackmd:uUm16q1oQDmN8T0m9FABNA HTTP/1.1

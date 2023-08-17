@@ -38,10 +38,15 @@ class RID:
         components = rid_str.split(":", 1)
         # if there is only one component then there was no means specified
         if len(components) != 2: 
-            raise MissingMeansError
+            raise IncompleteRIDError
         
         means, reference = components
         return cls(means, reference)
+    
+
+class Means:
+    symbol: None
+    actions: dict
 
 
 class Action(ABC):
