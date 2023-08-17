@@ -1,11 +1,11 @@
-from rid_lib.core import ContextualAction, Action, RID
+from rid_lib.core import Action, RID
 from rid_lib.schema import TRANSFORMER_CONTEXT_SCHEMA
 
 import re, requests
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
-class TransformUrl(ContextualAction):
+class TransformUrl(Action):
     context_schema = TRANSFORMER_CONTEXT_SCHEMA
 
     @staticmethod
@@ -28,7 +28,7 @@ class TransformUrl(ContextualAction):
 class DereferenceUrl(Action):
 
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         page = requests.get(rid.ref)
         page.raise_for_status()
 

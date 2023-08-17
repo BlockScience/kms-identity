@@ -1,10 +1,10 @@
-from rid_lib.core import ContextualAction, Action, RID
+from rid_lib.core import Action, RID
 from rid_lib.schema import TRANSFORMER_CONTEXT_SCHEMA
 
 import requests
 from bs4 import BeautifulSoup
 
-class TransformHackmd(ContextualAction):
+class TransformHackmd(Action):
     context_schema = TRANSFORMER_CONTEXT_SCHEMA
 
     @staticmethod
@@ -18,7 +18,7 @@ class TransformHackmd(ContextualAction):
 class DereferenceHackmd(Action):
 
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         url_rid = TransformHackmd.run(rid, context={"means": "url"})
         url = url_rid.ref
 

@@ -43,47 +43,51 @@ class RID:
         means, reference = components
         return cls(means, reference)
     
-
 class Means:
     symbol: None
     actions: dict
 
-
 class Action(ABC):
-    requires_rid = True
-    requires_context = False
     context_schema = None
 
     @classmethod
-    def run(cls, rid=None, context=None):
-        if cls.requires_rid:
-            if not rid:
-                raise MissingRIDError
-        else:
-            return cls.func()
+    def run(cls, rid: RID, context: dict | None = None):
+        if type(rid) is not RID:
+            raise MissingRIDError
 
-        if cls.requires_context:
+        if cls.context_schema:
             if not context:
-                raise MissingContextError
-            
-            if not cls.context_schema:
-                raise MissingContextSchemaError
-            
+                raise MissingContextError("Context schema set but no context provided")
+
             try:
                 jsonschema.validate(context, cls.context_schema)
             except ValidationError as e:
                 raise ContextSchemaValidationError(e.message)
-
-            return cls.func(rid, context)
-        return cls.func(rid)
-
+            
+        return cls.func(rid, context)
+    
     @staticmethod
     @abstractmethod
     def func(rid, context):
         raise NotImplementedError
     
-class ContextualAction(Action):
-    requires_context = True
+class Constructor(ABC):
+    context_schema = None
 
-class ConstructorAction(Action):
-    requires_rid = False
+    @classmethod
+    def run(cls, context: dict | None = None):
+        if cls.context_schema:
+            if not context:
+                raise MissingContextError("Context schema set but no context provided")
+
+            try:
+                jsonschema.validate(context, cls.context_schema)
+            except ValidationError as e:
+                raise ContextSchemaValidationError(e.message)
+        
+        return cls.func(context)
+
+    @staticmethod
+    @abstractmethod
+    def func(context):
+        raise NotImplementedError
