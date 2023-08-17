@@ -68,7 +68,7 @@ UNDIRECTED_ASSERTION_SCHEMA = {
             "items": {"type": "string"}
         }
     },
-    "required": [],
+    "required": ["members"],
     "additionalProperties": False
 }
 

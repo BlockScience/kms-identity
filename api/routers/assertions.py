@@ -18,73 +18,73 @@ router = APIRouter(
 @router.post("/undirected")
 @utils.validate_json(UNDIRECTED_ASSERTION_SCHEMA)
 def create_undirected_assertion(obj: dict):
-    obj["rid"] = RID("asrt", nanoid.generate()).string
-    return database.create_undirected_assertion(obj)
+    rid = RID("asrt", nanoid.generate())
+    return database.create_undirected_assertion(rid, obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_ASSERTION_SCHEMA)
 def create_directed_assertion(obj: dict):
-    obj["rid"] = RID("asrt", nanoid.generate()).string
-    return database.create_directed_assertion(obj)
+    rid = RID("asrt", nanoid.generate())
+    return database.create_directed_assertion(rid, obj)
 
 @router.post("/{forked_rid}/fork")
 def fork_assertion(forked_rid: str):
-    new_rid = RID("asrt", nanoid.generate()).string
-    return database.fork_assertion(forked_rid, new_rid)
+    new_rid = RID("asrt", nanoid.generate())
+    return database.fork_assertion(RID.from_string(forked_rid), new_rid)
 
 # The following three endpoints are identical but cover three different paths
 @router.put("/{rid}")
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")
 def update_assertion(rid: str, obj: dict):
-    return database.update_assertion(rid, obj)
+    return database.update_assertion(RID.from_string(rid), obj)
 
 @router.put("/undirected/{rid}")
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")
 def update_undirected_assertion(rid: str, obj: dict):
-    return database.update_assertion(rid, obj)
+    return database.update_assertion(RID.from_string(rid), obj)
 
 @router.put("/directed/{rid}")
 @utils.validate_json(UPDATE_ASSERTION_SCHEMA, instance="obj")
 def update_directed_assertion(rid: str, obj: dict):
-    return database.update_assertion(rid, obj)
+    return database.update_assertion(RID.from_string(rid), obj)
 
 
 # The following three endpoints are identical but cover three different paths
 @router.put("/{rid}/definition")
 @utils.validate_json(UPDATE_ASSERTION_DEFINITION_SCHEMA, instance="obj")
 def update_assertion_definition(rid: str, obj: dict):
-    return database.update_assertion_definition(rid, obj)
+    return database.update_assertion_definition(RID.from_string(rid), obj)
 
 @router.put("/undirected/{rid}/definition")
 @utils.validate_json(UPDATE_ASSERTION_DEFINITION_SCHEMA, instance="obj")
 def update_undirected_assertion_definition(rid: str, obj: dict):
-    return database.update_assertion_definition(rid, obj)
+    return database.update_assertion_definition(RID.from_string(rid), obj)
 
 @router.put("/directed/{rid}/definition")
 @utils.validate_json(UPDATE_ASSERTION_DEFINITION_SCHEMA, instance="obj")
 def update_directed_assertion_definition(rid: str, obj: dict):
-    return database.update_assertion_definition(rid, obj)
+    return database.update_assertion_definition(RID.from_string(rid), obj)
 
 
 @router.put("/undirected/{rid}/members")
 @utils.validate_json(UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA, instance="obj")
 def update_undirected_assertion_members(rid: str, obj: dict):
-    return database.update_undirected_assertion_members(rid, obj)
+    return database.update_undirected_assertion_members(RID.from_string(rid), obj)
 
 @router.put("/directed/{rid}/members")
 @utils.validate_json(UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA, instance="obj")
 def update_directed_assertion_members(rid: str, obj: dict):
-    return database.update_directed_assertion_members(rid, obj)
+    return database.update_directed_assertion_members(RID.from_string(rid), obj)
 
 # The following three endpoints are identical but cover three different paths
 @router.delete("/{rid}")
 def delete_assertion(rid: str):
-    return database.delete_assertion(rid)
+    return database.delete_assertion(RID.from_string(rid))
 
 @router.delete("/undirected/{rid}")
 def delete_undirected_assertion(rid: str):
-    return database.delete_assertion(rid)
+    return database.delete_assertion(RID.from_string(rid))
 
 @router.delete("/directed/{rid}")
 def delete_directed_assertion(rid: str):
-    return database.delete_assertion(rid)
+    return database.delete_assertion(RID.from_string(rid))

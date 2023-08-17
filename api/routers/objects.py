@@ -27,12 +27,12 @@ def create_object(obj: dict):
     if transform:
         rid = rid_lib.utils.transform(rid, transform)
 
-    obj = database.create_object(rid.string)
+    obj = database.create_object(rid)
 
     try:
         data = rid_lib.utils.dereference(rid)
         if data:
-            database.refresh_object(rid.string, data)
+            database.refresh_object(rid, data)
     except Exception as e:
         print(e)
 
@@ -40,10 +40,11 @@ def create_object(obj: dict):
 
 @router.get("/{rid}")
 def read_object(rid):
-    return database.read_object(rid)
+    return database.read_object(RID.from_string(rid))
 
 @router.put("/{rid}")
 def update_object(rid):
+    rid = RID.from_string(rid)
     data = rid_lib.dereference(rid)
     database.refresh_object(rid, data)
     return data

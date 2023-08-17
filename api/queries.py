@@ -27,7 +27,7 @@ class TX:
 
 CREATE_OBJECT = """
     MERGE (object:Object {rid: $rid})
-    SET object += $props
+    SET object += $params
     RETURN object
 """
 
@@ -39,13 +39,13 @@ READ_OBJECT = """
 REFRESH_OBJECT = """
     MERGE (o:Object {rid: $rid})  
     MERGE (o)-[:REFERS_TO]->(d:Data)  
-    SET d = $props
+    SET d = $params
 """
 
 # Relation Operations
 
 CREATE_UNDIRECTED = """
-    CREATE (relation:Undirected:{}) SET relation = $props  
+    CREATE (relation:Undirected:{} {{rid: $rid}}) SET relation += $params  
     WITH relation  
     UNWIND $member_rids AS member_rid  
     MATCH (member) WHERE member.rid = member_rid  
@@ -54,7 +54,7 @@ CREATE_UNDIRECTED = """
 """
 
 CREATE_DIRECTED = """
-    CREATE (relation:Directed:{}) SET relation = $props
+    CREATE (relation:Directed:{} {{rid: $rid}}) SET relation += $params
 """
       
 CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(LABEL.RELATION)
@@ -115,7 +115,7 @@ CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(LABEL.ASSERTION)
 UPDATE_ASSERTION = """
     MATCH (assertion:Assertion)  
     WHERE assertion.rid = $rid  
-    SET assertion += $props
+    SET assertion += $params
 """
 
 REMOVE_DEFINITION = """
@@ -174,14 +174,14 @@ DELETE_ASSERTION = """
 INIT_TRANSACTION = """
     MATCH (assertion:Assertion)  
     WHERE assertion.rid = $rid  
-    CREATE (tx:Transaction $props)<-[:IS]-(assertion)  
+    CREATE (tx:Transaction $params)<-[:IS]-(assertion)  
     RETURN tx
 """
 
 FORK_TRANSACTION = """
     MATCH (forked:Assertion {rid: $forked_rid})-[:IS]->(prev:Transaction)
     MATCH (assertion:Assertion {rid: $new_rid})
-    CREATE (prev)<-[:PREV]-(tx:Transaction $props)<-[:IS]-(assertion)
+    CREATE (prev)<-[:PREV]-(tx:Transaction $params)<-[:IS]-(assertion)
     RETURN tx
 """
 
@@ -189,7 +189,7 @@ ADD_TRANSACTION = """
     MATCH (assertion:Assertion)-[edge:IS]->(tx:Transaction)  
     WHERE assertion.rid = $rid  
     DELETE edge  
-    CREATE (tx)<-[:PREV]-(ntx:Transaction $props)<-[:IS]-(assertion)  
+    CREATE (tx)<-[:PREV]-(ntx:Transaction $params)<-[:IS]-(assertion)  
     RETURN ntx AS tx
 """
 

@@ -14,19 +14,19 @@ router = APIRouter(
 @router.post("/undirected")
 @utils.validate_json(UNDIRECTED_RELATION_SCHEMA)
 def create_undirected_relation(obj: dict):
-    obj["rid"] = RID("rel", nanoid.generate()).string
-    return database.create_undirected_relation(obj)
+    rid = RID("rel", nanoid.generate())
+    return database.create_undirected_relation(rid, obj)
 
 @router.post("/directed")
 @utils.validate_json(DIRECTED_RELATION_SCHEMA)
 def create_directed_relation(obj: dict):
-    obj["rid"] = RID("rel", nanoid.generate()).string
-    return database.create_directed_relation(obj)
+    rid = RID("rel", nanoid.generate())
+    return database.create_directed_relation(rid, obj)
 
 @router.get("/{rid}")
 def read_relation(rid: str):
-    return database.read_relation(rid)
+    return database.read_relation(RID.from_string(rid))
 
 @router.delete("/{rid}")
 def delete_relation(rid: str):
-    database.delete_relation(rid)
+    database.delete_relation(RID.from_string(rid))
