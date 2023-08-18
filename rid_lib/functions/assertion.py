@@ -22,13 +22,13 @@ class CreateDirectedAssertion(Constructor):
     
 class ForkAssertion(Action):
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         new_rid = RID(rid.means, nanoid.generate())
         return api.database.fork_assertion(rid, new_rid)
 
 class ReadAssertion(Action):
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         return api.database.read_relation(rid)
 
 class UpdateAssertion(Action):
@@ -54,5 +54,5 @@ class UpdateDirectedAssertionMembers(Action):
 
 class DeleteAssertion(Action):
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         api.database.delete_assertion(rid)

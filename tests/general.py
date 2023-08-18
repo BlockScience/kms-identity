@@ -28,24 +28,24 @@ print(obj1, obj2, obj3, obj4, obj5)
 rel1 = api.relations.create_undirected_relation(obj={
     "name": "Tag",
     "members": [obj1, obj2, obj3]
-})["rid"]
+})[0].string
 
 rel2 = api.relations.create_directed_relation(obj={
     "name": "Class Pattern",
     "from": [obj4, obj5],
     "to": [obj2]
-})["rid"]
+})[0].string
 
 asr1 = api.assertions.create_undirected_assertion(obj={
     "name": "Tag",
     "members": [obj1, obj2, obj3]
-})["rid"]
+})[0].string
 
 asr2 = api.assertions.create_directed_assertion(obj={
     "name": "Class Pattern",
     "from": [obj4, obj5],
     "to": [obj2]
-})["rid"]
+})[0].string
 
 api.assertions.update_assertion(rid=asr1, obj={"name": "New Name"})
 api.assertions.update_assertion(rid=asr1, obj={"name": "New Name2"})

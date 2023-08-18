@@ -11,9 +11,4 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/hackmd:uUm16q1oQDmN8T0m9FABNA/transform HTTP/1.1
-Content-Type: application/json
-
-{
-    "means": "url"
-}
+POST http://localhost:8000/hackmd:uUm16q1oQDmN8T0m9FABNA/dereference HTTP/1.1

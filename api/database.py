@@ -42,7 +42,7 @@ def create_undirected_relation(tx, rid: RID, params):
     if definition_rid and (definition_rid != rid.string):
         tx.run(SET_DEFINITION, rid=rid.string, definition_rid=definition_rid)
     
-    return {
+    return rid, {
         "rid": rid.string,
         "members": result.get("members")
     }
@@ -64,7 +64,7 @@ def create_directed_relation(tx, rid: RID, params):
     if definition_rid and (definition_rid != rid.string):
         tx.run(SET_DEFINITION, rid=rid.string, definition_rid=definition_rid)
     
-    return {
+    return rid, {
         "rid": rid.string,
         "from": from_result.get("from"),
         "to": to_result.get("to")
@@ -140,7 +140,7 @@ def create_undirected_assertion(tx, rid: RID, params):
     if definition_rid and (definition_rid != rid.string):
         tx.run(SET_DEFINITION, rid=rid.string, definition_rid=definition_rid)
 
-    return {
+    return rid, {
         "rid": rid.string,
         "members": members
     }
@@ -167,7 +167,7 @@ def create_directed_assertion(tx, rid: RID, params):
         "data": json_data
     })
 
-    return {
+    return rid, {
         "rid": rid.string,
         "from": from_result.get("from"),
         "to": to_result.get("to")
@@ -256,6 +256,8 @@ def fork_assertion(tx, rid: RID, new_rid: RID):
             "rid": new_rid.string
         })
     })
+
+    return new_rid
 
 @execute_write
 def update_assertion(tx, rid: RID, params):

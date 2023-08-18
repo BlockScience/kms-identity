@@ -22,10 +22,10 @@ class CreateDirectedRelation(Constructor):
     
 class ReadRelation(Action):
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         return api.database.read_relation(rid)
 
 class DeleteRelation(Action):
     @staticmethod
-    def func(rid):
+    def func(rid, context):
         api.database.delete_assertion(rid)

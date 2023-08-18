@@ -144,7 +144,8 @@ UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA = {
                 "to": {
                     "type": "array",
                     "items": {"type": "string"}
-                }
+                },
+                "additionalProperties": False
             }
         },
         "remove": {
@@ -158,7 +159,9 @@ UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA = {
                     "type": "array",
                     "items": {"type": "string"}
                 }
-            }
-        }
+            },
+            "additionalProperties": False
+        },
+        "additionalProperties": False
     }
 }
