@@ -52,8 +52,8 @@ class Action(ABC):
 
     @classmethod
     def run(cls, rid: RID, context: dict | None = None):
-        if type(rid) is not RID:
-            raise MissingRIDError
+        # if type(rid) is not RID:
+        #     raise MissingRIDError
 
         if cls.context_schema:
             if not context:

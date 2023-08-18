@@ -1,7 +1,22 @@
 from rid_lib.functions import *
 
-class NewRID:
+class ConstructorMetaClass(type):
+    def __getattr__(cls, name):
+        action = cls.actions[name]
+
+        def func(ctx=None, **kwargs):
+            if ctx is None:
+                ctx = kwargs
+            else:
+                ctx.update(kwargs)
+
+            return action.run(ctx)
+        
+        return func
+
+class NewRID(metaclass=ConstructorMetaClass):
     means: str
+    label: str
     actions: dict
 
     def __init__(self, reference):
@@ -33,7 +48,12 @@ class NewRID:
     def __getattr__(self, name):
         action = self.actions[name]
 
-        def func(ctx=None):
+        def func(ctx=None, **kwargs):
+            if not ctx:
+                ctx = kwargs
+            else:
+                ctx.update(kwargs)
+
             return action.run(self, ctx)
         
         return func
@@ -45,7 +65,26 @@ class HackMD(NewRID):
         "transform": TransformHackmd
     }
 
+class UndirectedRelation(NewRID):
+    symbol = UNDIRECTED_RELATION
+    actions = {
+        "create": CreateUndirectedRelation,
+        "read": ReadRelation,
+        "delete": DeleteRelation
+    }
+
 obj = HackMD("uUm16q1oQDmN8T0m9FABNA")
 
 print(obj.dereference())
 print(obj.transform({"means": "url"}))
+
+rel = UndirectedRelation.create(
+    name = "Relation",
+    members = [
+        "hackmd:XVaejEw-QaCghV1Tkv3eVQ",
+        "hackmd:y302YrhfRXm64j_51fbEGA",
+        "hackmd:ynez1CzJS6KPRByPzCwhfA"
+    ]
+)
+
+print(rel)
