@@ -125,9 +125,13 @@ def delete_relation(tx, rid: RID):
 def create_undirected_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
     member_rids = params.pop("members")
+    label = params.pop("label", None)
 
     records = tx.run(CREATE_UNDIRECTED_ASSERTION, rid=rid.string, params=params, member_rids=member_rids)
     result = records.single()
+
+    if label:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
 
     members = result.get("members")
 
@@ -150,10 +154,14 @@ def create_directed_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
     from_rids = params.pop("from")
     to_rids = params.pop("to")
+    label = params.pop("label", None)
 
     tx.run(CREATE_DIRECTED_ASSERTION, rid=rid.string, params=params)
     from_records = tx.run(CREATE_FROM_EDGES, rid=rid.string, from_rids=from_rids)
     to_records = tx.run(CREATE_TO_EDGES, rid=rid.string, to_rids=to_rids)
+
+    if label:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
 
     from_result = from_records.single()
     to_result = to_records.single()

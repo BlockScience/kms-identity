@@ -34,8 +34,7 @@ UNDIRECTED_RELATION_SCHEMA = {
             "items": {"type": "string"}
         }
     },
-    "required": ["members"],
-    "additionalProperties": False
+    "required": ["members"]
 }
 
 DIRECTED_RELATION_SCHEMA = {
@@ -53,8 +52,7 @@ DIRECTED_RELATION_SCHEMA = {
             "items": {"type": "string"}
         }
     },
-    "required": ["from", "to"],
-    "additionalProperties": False
+    "required": ["from", "to"]
 }
 
 UNDIRECTED_ASSERTION_SCHEMA = {
@@ -68,8 +66,7 @@ UNDIRECTED_ASSERTION_SCHEMA = {
             "items": {"type": "string"}
         }
     },
-    "required": ["members"],
-    "additionalProperties": False
+    "required": ["members"]
 }
 
 DIRECTED_ASSERTION_SCHEMA = {
@@ -87,8 +84,7 @@ DIRECTED_ASSERTION_SCHEMA = {
             "items": {"type": "string"}
         }
     },
-    "required": [],
-    "additionalProperties": False
+    "required": []
 }
 
 UPDATE_ASSERTION_SCHEMA = {

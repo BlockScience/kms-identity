@@ -112,6 +112,12 @@ DELETE_RELATION = """
 CREATE_UNDIRECTED_ASSERTION = CREATE_UNDIRECTED.format(LABEL.ASSERTION)
 CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(LABEL.ASSERTION)
 
+SET_LABEL = """
+    MATCH (assertion:Assertion)
+    WHERE assertion.rid = $rid
+    SET assertion :{}
+"""
+
 UPDATE_ASSERTION = """
     MATCH (assertion:Assertion)  
     WHERE assertion.rid = $rid  
