@@ -44,7 +44,7 @@ class RID:
         return cls(means, reference)
     
 class Means:
-    symbol: None
+    symbol: str
     actions: dict
 
 class Action(ABC):
