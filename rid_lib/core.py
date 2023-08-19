@@ -75,7 +75,7 @@ class Constructor(ABC):
     context_schema = None
 
     @classmethod
-    def run(cls, context: dict | None = None):
+    def run(cls, means, context: dict | None = None):
         if cls.context_schema:
             if not context:
                 raise MissingContextError("Context schema set but no context provided")
@@ -85,9 +85,9 @@ class Constructor(ABC):
             except ValidationError as e:
                 raise ContextSchemaValidationError(e.message)
         
-        return cls.func(context)
+        return cls.func(means, context)
 
     @staticmethod
     @abstractmethod
-    def func(context):
+    def func(cls, context):
         raise NotImplementedError

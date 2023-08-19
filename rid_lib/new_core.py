@@ -10,7 +10,7 @@ class ConstructorMetaClass(type):
             else:
                 ctx.update(kwargs)
 
-            return action.run(ctx)
+            return action.run(cls, ctx)
         
         return func
 
@@ -25,6 +25,10 @@ class NewRID(metaclass=ConstructorMetaClass):
     @property
     def ref(self):
         return self.reference
+    
+    @property
+    def means(self):
+        return self.symbol
     
     @property
     def string(self):

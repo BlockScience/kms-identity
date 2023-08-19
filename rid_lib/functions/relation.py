@@ -8,17 +8,21 @@ class CreateUndirectedRelation(Constructor):
     context_schema = UNDIRECTED_RELATION_SCHEMA
 
     @staticmethod
-    def func(context):
-        rid = RID(UNDIRECTED_RELATION, nanoid.generate())
-        return api.database.create_undirected_relation(rid, context)
+    def func(cls, context):
+        rid = cls(nanoid.generate())
+        resp = api.database.create_undirected_relation(rid, context)
+        print(resp)
+        return rid
 
 class CreateDirectedRelation(Constructor):
     context_schema = DIRECTED_RELATION_SCHEMA
 
     @staticmethod
-    def func(context):
-        rid = RID(DIRECTED_RELATION, nanoid.generate())
-        return api.database.create_directed_relation(rid, context)
+    def func(cls, context):
+        rid = cls(nanoid.generate())
+        resp = api.database.create_directed_relation(rid, context)
+        print(resp)
+        return rid
     
 class ReadRelation(Action):
     @staticmethod
