@@ -19,6 +19,7 @@ class ConstructorAccessMetaClass(type):
             return action(cls, ctx)
         return wrapper
 
+
 class RID(metaclass=ConstructorAccessMetaClass):
     symbol: str
     label: str
@@ -64,7 +65,8 @@ class RID(metaclass=ConstructorAccessMetaClass):
 
             return action(self, ctx)
         return wrapper
-    
+
+
 def function(constructor=False, schema=None):
     def decorator(func):
         @functools.wraps(func)
@@ -88,21 +90,3 @@ def function(constructor=False, schema=None):
             return func(identifier, context)
         return wrapper
     return decorator
-
-
-# obj = HackMD("uUm16q1oQDmN8T0m9FABNA")
-
-# print(obj.dereference())
-
-# print(obj.transform({"means": "url"}))
-
-# rel = UndirectedRelation.create(
-#     name = "Relation",
-#     members = [
-#         "hackmd:XVaejEw-QaCghV1Tkv3eVQ",
-#         "hackmd:y302YrhfRXm64j_51fbEGA",
-#         "hackmd:ynez1CzJS6KPRByPzCwhfA"
-#     ]
-# )
-
-# print(rel)

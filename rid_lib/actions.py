@@ -1,6 +1,10 @@
 from .means import *
 from .functions import *
 
+RID.actions = {
+    "from_string": from_string
+}
+
 UndirectedRelation.actions = {
     "create": create_undirected_relation,
     "read": read_relation,

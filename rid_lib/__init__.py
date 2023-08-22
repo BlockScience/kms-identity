@@ -5,3 +5,4 @@ from . import exceptions
 from . import actions
 from . import functions
 from . import means
+from . import table
