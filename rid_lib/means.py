@@ -1,4 +1,4 @@
-from rid_lib.core import RID
+from .core import RID
 
 class UndirectedRelation(RID):
     symbol = "und_rel"

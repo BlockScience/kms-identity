@@ -1,9 +1,7 @@
-from rid_lib.core import Action, RID
+from ..core import function
 
-class TestAction(Action):
-
-    @staticmethod
-    def func(rid, context):
-        return {
-            "data": rid.ref
-        }
+@function()
+def test_action(rid, context):
+    return {
+        "data": rid.ref
+    }

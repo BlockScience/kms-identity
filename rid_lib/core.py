@@ -1,4 +1,4 @@
-from rid_lib.exceptions import *
+from .exceptions import *
 import functools
 import jsonschema
 from jsonschema.exceptions import ValidationError

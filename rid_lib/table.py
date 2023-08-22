@@ -1,4 +1,5 @@
-from . import means, RID
+from . import means
+from .core import RID
 from .exceptions import *
 import inspect
 
