@@ -7,6 +7,9 @@ class MissingRIDError(Exception):
 class MissingContextError(Exception):
     pass
 
+class InvalidContextError(Exception):
+    pass
+
 class MissingContextSchemaError(Exception):
     pass
 

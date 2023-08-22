@@ -11,6 +11,9 @@ class ConstructorAccessMetaClass(type):
             raise ActionNotFoundError(f"Action '{name}' undefined for means '{cls.symbol}'")
 
         def wrapper(ctx=None, **kwargs):
+            if type(ctx) is not dict:
+                raise InvalidContextError("Context should be of type 'dict', or passed as keyword arguments")
+            
             if not ctx:
                 ctx = kwargs
             else:
@@ -30,7 +33,7 @@ class RID(metaclass=ConstructorAccessMetaClass):
     
     @property
     def means(self):
-        return self.__class__
+        return type(self)
 
     @property
     def ref(self):
@@ -58,10 +61,13 @@ class RID(metaclass=ConstructorAccessMetaClass):
             raise ActionNotFoundError(f"Action '{name}' undefined for means '{self.symbol}'")
 
         def wrapper(ctx=None, **kwargs):
-            if not ctx:
-                ctx = kwargs
-            else:
+            if ctx:
+                if type(ctx) is not dict:
+                    raise InvalidContextError("Context should be of type 'dict', or passed as keyword arguments")
                 ctx.update(kwargs)
+
+            else:
+                ctx = kwargs
 
             return action(self, ctx)
         return wrapper
@@ -80,7 +86,7 @@ def function(constructor=False, schema=None):
             
             if schema:
                 if context is None:
-                    raise MissingContextError("Context schema set but no context provided")
+                    raise MissingContextError("Context schema set but no context provided")                    
                 
                 try:
                     jsonschema.validate(context, schema)

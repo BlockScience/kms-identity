@@ -3,7 +3,7 @@ from ..exceptions import *
 from ..table import lookup
 
 @function(constructor=True)
-def from_string(RID, context):
+def from_string(_, context):
     rid_str = context["rid"]
     components = rid_str.split(":", 1)
 
@@ -11,6 +11,6 @@ def from_string(RID, context):
         raise IncompleteRIDError
     
     symbol, reference = components
-    Means = lookup(symbol)
+    RID = lookup(symbol)
 
-    return Means(reference)
+    return RID(reference)
