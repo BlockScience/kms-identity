@@ -18,3 +18,6 @@ class MeansNotFoundError(Exception):
 
 class ActionNotFoundError(Exception):
     pass
+
+class ActionTypeError(Exception):
+    pass

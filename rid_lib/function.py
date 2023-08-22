@@ -6,7 +6,7 @@ import nanoid, requests
 import api
 from bs4 import BeautifulSoup
 
-@function(schema=UNDIRECTED_RELATION_SCHEMA)
+@function(constructor=True, schema=UNDIRECTED_RELATION_SCHEMA)
 def create_undirected_relation(Means, context):
     rid = Means(nanoid.generate())
     api.database.create_undirected_relation(rid, context)

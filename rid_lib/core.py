@@ -5,16 +5,19 @@ from jsonschema.exceptions import ValidationError
 
 class ConstructorAccessMetaClass(type):
     def __getattr__(cls, name):
-        action = cls.actions[name]
+        try:
+            action = cls.actions[name]
+        except ValueError:
+            raise ActionNotFoundError(f"Action '{name}' undefined for means '{cls.means}'")
 
-        def func(ctx=None, **kwargs):
-            if ctx is None:
+        def wrapper(ctx=None, **kwargs):
+            if not ctx:
                 ctx = kwargs
             else:
                 ctx.update(kwargs)
 
             return action(cls, ctx)
-        return func
+        return wrapper
 
 class RID(metaclass=ConstructorAccessMetaClass):
     symbol: str
@@ -23,10 +26,10 @@ class RID(metaclass=ConstructorAccessMetaClass):
 
     def __init__(self, reference):
         self.reference = reference
-
+    
     @property
     def means(self):
-        return self.symbol
+        return self.__class__
 
     @property
     def ref(self):
@@ -35,16 +38,12 @@ class RID(metaclass=ConstructorAccessMetaClass):
     @property
     def string(self):
         return str(self)
-    
-    @property
-    def dict(self):
-        return self.__dict__
 
     def __str__(self):
-        return self.means + ":" + self.reference
+        return self.symbol + ":" + self.reference
     
     def __repr__(self):
-        return f"RID object {(self.means, self.reference)}"
+        return f"RID object {(self.symbol, self.reference)}"
     
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -52,21 +51,31 @@ class RID(metaclass=ConstructorAccessMetaClass):
         return False
     
     def __getattr__(self, name):
-        action = self.actions[name]
+        try:
+            action = self.actions[name]
+        except ValueError:
+            raise ActionNotFoundError(f"Action '{name}' undefined for means '{self.means}'")
 
-        def func(ctx=None, **kwargs):
+        def wrapper(ctx=None, **kwargs):
             if not ctx:
                 ctx = kwargs
             else:
                 ctx.update(kwargs)
 
             return action(self, ctx)
-        return func
+        return wrapper
     
-def function(schema=None):
+def function(constructor=False, schema=None):
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(rid, context=None):
+        def wrapper(identifier, context=None):
+            if constructor:
+                if not isinstance(identifier, type):
+                    raise ActionTypeError(f"Unable to call constructor function '{func.__name__}' on a RID object, must be called on the class")
+            else:
+                if not isinstance(identifier, RID):
+                    raise ActionTypeError(f"Unable to call regular function '{func.__name__}' on a RID class, must be called on the object") 
+            
             if schema:
                 if context is None:
                     raise MissingContextError("Context schema set but no context provided")
@@ -75,28 +84,12 @@ def function(schema=None):
                     jsonschema.validate(context, schema)
                 except ValidationError as e:
                     raise ContextSchemaValidationError(e.message)
-
-            return func(rid, context)
-        return wrapper
-    return decorator
-
-def constructor(schema=None):
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(means, context=None):
-            if schema:
-                if context is None:
-                    raise MissingContextError("Context schema set but no context provided")
                 
-                try:
-                    jsonschema.validate(context, schema)
-                except ValidationError as e:
-                    raise ContextSchemaValidationError(e.message)
+            print(constructor)
 
-            return func(means, context)
+            return func(identifier, context)
         return wrapper
     return decorator
-
 
 
 # obj = HackMD("uUm16q1oQDmN8T0m9FABNA")
