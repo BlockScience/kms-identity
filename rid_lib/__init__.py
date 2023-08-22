@@ -2,7 +2,6 @@ from .core import *
 
 # from . import utils
 from . import exceptions
-from . import function
 from . import actions
-# from . import functions
+from . import functions
 from . import means

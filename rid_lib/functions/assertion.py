@@ -1,58 +1,43 @@
-from rid_lib.core import Action, Constructor, RID
-from rid_lib.symbols import *
+from ..core import function
 from api.schema import *
 import api
 import nanoid
 
-class CreateUndirectedAssertion(Constructor):
-    context_schema = UNDIRECTED_ASSERTION_SCHEMA
+@function(constructor=True, schema=UNDIRECTED_ASSERTION_SCHEMA)
+def create_undirected_assertion(RID, context):
+    rid = RID(nanoid.generate())
+    api.database.create_undirected_assertion(rid, context)
+    return rid
 
-    @staticmethod
-    def func(context):
-        rid = RID(UNDIRECTED_ASSERTION, nanoid.generate())
-        return api.database.create_undirected_assertion(rid, context)
+@function(constructor=True, schema=DIRECTED_ASSERTION_SCHEMA)
+def create_directed_assertion(RID, context):
+    rid = RID(nanoid.generate())
+    api.database.create_directed_assertion(rid, context)
+    return rid
 
-class CreateDirectedAssertion(Constructor):
-    context_schema = DIRECTED_ASSERTION_SCHEMA
+@function()
+def fork_assertion(rid, context):
+    RID = rid.means
+    new_rid = RID(nanoid.generate())
+    api.database.fork_assertion(rid, new_rid)
+    return new_rid
 
-    @staticmethod
-    def func(context):
-        rid = RID(DIRECTED_ASSERTION, nanoid.generate())
-        return api.database.create_directed_assertion(rid, context)
-    
-class ForkAssertion(Action):
-    @staticmethod
-    def func(rid, context):
-        new_rid = RID(rid.means, nanoid.generate())
-        return api.database.fork_assertion(rid, new_rid)
+@function()
+def read_assertion(rid, context):
+    return api.database.read_relation(rid)
 
-class ReadAssertion(Action):
-    @staticmethod
-    def func(rid, context):
-        return api.database.read_relation(rid)
+@function(schema=UPDATE_ASSERTION_SCHEMA)
+def update_assertion(rid, context):
+    api.database.update_assertion(rid, context)
 
-class UpdateAssertion(Action):
-    context_schema = UPDATE_ASSERTION_SCHEMA
+@function(schema=UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA)
+def update_undirected_assertion_members(rid, context):
+    api.database.update_undirected_assertion_members(rid, context)
 
-    @staticmethod
-    def func(rid, context):
-        api.database.update_assertion(rid, context)
+@function(schema=UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA)
+def update_directed_assertion_members(rid, context):
+    api.database.update_directed_assertion_members(rid, context)
 
-class UpdateUndirectedAssertionMembers(Action):
-    context_schema = UPDATE_UNDIRECTED_ASSERTION_MEMBERS_SCHEMA
-
-    @staticmethod
-    def func(rid, context):
-        api.database.update_undirected_assertion_members(rid, context)
-
-class UpdateDirectedAssertionMembers(Action):
-    context_schema = UPDATE_DIRECTED_ASSERTION_MEMBERS_SCHEMA
-
-    @staticmethod
-    def func(rid, context):
-        api.database.update_directed_assertion_members(rid, context)
-
-class DeleteAssertion(Action):
-    @staticmethod
-    def func(rid, context):
-        api.database.delete_assertion(rid)
+@function()
+def delete_assertion(rid, context):
+    api.database.delete_assertion(rid)

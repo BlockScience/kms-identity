@@ -65,8 +65,7 @@ UNDIRECTED_ASSERTION_SCHEMA = {
             "type": "array",
             "items": {"type": "string"}
         }
-    },
-    "required": ["members"]
+    }
 }
 
 DIRECTED_ASSERTION_SCHEMA = {
@@ -83,8 +82,7 @@ DIRECTED_ASSERTION_SCHEMA = {
             "type": "array",
             "items": {"type": "string"}
         }
-    },
-    "required": []
+    }
 }
 
 UPDATE_ASSERTION_SCHEMA = {

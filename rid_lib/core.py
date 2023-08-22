@@ -8,7 +8,7 @@ class ConstructorAccessMetaClass(type):
         try:
             action = cls.actions[name]
         except ValueError:
-            raise ActionNotFoundError(f"Action '{name}' undefined for means '{cls.means}'")
+            raise ActionNotFoundError(f"Action '{name}' undefined for means '{cls.symbol}'")
 
         def wrapper(ctx=None, **kwargs):
             if not ctx:
@@ -54,7 +54,7 @@ class RID(metaclass=ConstructorAccessMetaClass):
         try:
             action = self.actions[name]
         except ValueError:
-            raise ActionNotFoundError(f"Action '{name}' undefined for means '{self.means}'")
+            raise ActionNotFoundError(f"Action '{name}' undefined for means '{self.symbol}'")
 
         def wrapper(ctx=None, **kwargs):
             if not ctx:
@@ -85,8 +85,6 @@ def function(constructor=False, schema=None):
                 except ValidationError as e:
                     raise ContextSchemaValidationError(e.message)
                 
-            print(constructor)
-
             return func(identifier, context)
         return wrapper
     return decorator

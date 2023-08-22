@@ -1,5 +1,5 @@
 from .means import *
-from .function import *
+from .functions import *
 
 UndirectedRelation.actions = {
     "create": create_undirected_relation,
@@ -7,7 +7,31 @@ UndirectedRelation.actions = {
     "delete": delete_relation
 }
 
-HackMd.actions = {
-    "transform": transform_hackmd,
-    "dereference": dereference_hackmd
+DirectedRelation.actions = {
+    "create": create_directed_relation,
+    "read": read_relation,
+    "delete": delete_relation
 }
+
+UndirectedAssertion.actions = {
+    "create": create_undirected_assertion,
+    "fork": fork_assertion,
+    "read": read_assertion,
+    "update": update_assertion,
+    "update_members": update_undirected_assertion_members,
+    "delete": delete_assertion
+}
+
+DirectedAssertion.actions = {
+    "create": create_directed_assertion,
+    "fork": fork_assertion,
+    "read": read_assertion,
+    "update": update_assertion,
+    "update_members": update_directed_assertion_members,
+    "delete": delete_assertion
+}
+
+# HackMd.actions = {
+#     "transform": transform_hackmd,
+#     "dereference": dereference_hackmd
+# }

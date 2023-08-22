@@ -7,8 +7,8 @@ import api
 from bs4 import BeautifulSoup
 
 @function(constructor=True, schema=UNDIRECTED_RELATION_SCHEMA)
-def create_undirected_relation(Means, context):
-    rid = Means(nanoid.generate())
+def create_undirected_relation(RID, context):
+    rid = RID(nanoid.generate())
     api.database.create_undirected_relation(rid, context)
     return rid
 
