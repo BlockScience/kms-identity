@@ -12,8 +12,11 @@ class UndirectedAssertion(RID):
 class DirectedAssertion(RID):
     symbol = "dir_asrt"
 
-class HackMd(RID):
+class URL(RID):
+    symbol = "url"
+
+class HackMD(RID):
     symbol = "hackmd"
 
-class Url(RID):
-    symbol = "url"
+class Slack(RID):
+    symbol = "slack"

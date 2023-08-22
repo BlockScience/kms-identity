@@ -31,7 +31,12 @@ DirectedAssertion.actions = {
     "delete": delete_assertion
 }
 
-# HackMd.actions = {
-#     "transform": transform_hackmd,
-#     "dereference": dereference_hackmd
-# }
+URL.actions = {
+    "transform": transform_url,
+    "dereference": dereference_hackmd
+}
+
+HackMD.actions = {
+    "transform": transform_hackmd,
+    "dereference": dereference_hackmd
+}

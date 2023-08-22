@@ -3,7 +3,7 @@ import api
 
 api.database.drop()
 
-rid = HackMd("uUm16q1oQDmN8T0m9FABNA")
+rid = HackMD("uUm16q1oQDmN8T0m9FABNA")
 
 rel = UndirectedRelation.create(members=[rid.string])
 rel2 = UndirectedRelation.create(members=[rid.string])
