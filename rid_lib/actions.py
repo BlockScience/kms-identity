@@ -6,3 +6,8 @@ UndirectedRelation.actions = {
     "read": read_relation,
     "delete": delete_relation
 }
+
+HackMd.actions = {
+    "transform": transform_hackmd,
+    "dereference": dereference_hackmd
+}
