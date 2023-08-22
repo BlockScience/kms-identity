@@ -7,9 +7,10 @@ class ConstructorAccessMetaClass(type):
     def __getattr__(cls, name):
         try:
             action = cls.actions[name]
-        except ValueError:
+        except KeyError:
             raise ActionNotFoundError(f"Action '{name}' undefined for means '{cls.symbol}'")
 
+        @functools.wraps(action)
         def wrapper(ctx=None, **kwargs):
             if ctx:
                 if type(ctx) is not dict:
@@ -47,7 +48,7 @@ class RID(metaclass=ConstructorAccessMetaClass):
         return self.symbol + ":" + self.reference
     
     def __repr__(self):
-        return f"RID object {(self.symbol, self.reference)}"
+        return f"{type(self).__name__} object {self.string}"
     
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -57,9 +58,10 @@ class RID(metaclass=ConstructorAccessMetaClass):
     def __getattr__(self, name):
         try:
             action = self.actions[name]
-        except ValueError:
+        except KeyError:
             raise ActionNotFoundError(f"Action '{name}' undefined for means '{self.symbol}'")
-
+        
+        @functools.wraps(action)
         def wrapper(ctx=None, **kwargs):
             if ctx:
                 if type(ctx) is not dict:
@@ -71,7 +73,14 @@ class RID(metaclass=ConstructorAccessMetaClass):
 
             return action(self, ctx)
         return wrapper
-
+    
+    @classmethod
+    def set_actions(cls, actions):
+        if cls == RID:
+            cls.actions = {}
+        else:
+            cls.actions = cls.__base__.actions.copy()
+        cls.actions.update(actions)
 
 def function(constructor=False, schema=None):
     def decorator(func):

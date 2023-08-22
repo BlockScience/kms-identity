@@ -33,8 +33,7 @@ UNDIRECTED_RELATION_SCHEMA = {
             "type": "array",
             "items": {"type": "string"}
         }
-    },
-    "required": ["members"]
+    }
 }
 
 DIRECTED_RELATION_SCHEMA = {
@@ -51,8 +50,7 @@ DIRECTED_RELATION_SCHEMA = {
             "type": "array",
             "items": {"type": "string"}
         }
-    },
-    "required": ["from", "to"]
+    }
 }
 
 UNDIRECTED_ASSERTION_SCHEMA = {

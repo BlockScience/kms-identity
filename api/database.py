@@ -14,7 +14,10 @@ def drop(tx):
 
 @execute_write
 def create_object(tx, rid: RID):
-    records = tx.run(CREATE_OBJECT, rid=rid.string, params=rid.dict)
+    records = tx.run(CREATE_OBJECT, rid=rid.string, params={
+        "means": rid.means.symbol,
+        "reference": rid.reference
+    })
     result = records.single()
     return result.get("object", None)
 
@@ -33,7 +36,7 @@ def read_object(tx, rid: RID):
 @execute_write
 def create_undirected_relation(tx, rid: RID, params):
     # removes self edges
-    member_rids = [m for m in params.pop("members") if m != rid.string]
+    member_rids = [m for m in params.pop("members", []) if m != rid.string]
 
     records = tx.run(CREATE_UNDIRECTED_RELATION, rid=rid.string, params=params, member_rids=member_rids)
     result = records.single()
@@ -50,8 +53,8 @@ def create_undirected_relation(tx, rid: RID, params):
 @execute_write
 def create_directed_relation(tx, rid: RID, params):
     # removes self edges
-    from_rids = [m for m in params.pop("from") if m != rid.string]
-    to_rids = [m for m in params.pop("to") if m != rid.string]
+    from_rids = [m for m in params.pop("from", []) if m != rid.string]
+    to_rids = [m for m in params.pop("to", []) if m != rid.string]
     
     tx.run(CREATE_DIRECTED_RELATION, rid=rid.string, params=params)
     from_records = tx.run(CREATE_FROM_EDGES, rid=rid.string, from_rids=from_rids)
@@ -124,7 +127,7 @@ def delete_relation(tx, rid: RID):
 @execute_write
 def create_undirected_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
-    member_rids = params.pop("members")
+    member_rids = params.pop("members", [])
     label = params.pop("label", None)
 
     records = tx.run(CREATE_UNDIRECTED_ASSERTION, rid=rid.string, params=params, member_rids=member_rids)
@@ -152,8 +155,8 @@ def create_undirected_assertion(tx, rid: RID, params):
 @execute_write
 def create_directed_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
-    from_rids = params.pop("from")
-    to_rids = params.pop("to")
+    from_rids = params.pop("from", [])
+    to_rids = params.pop("to", [])
     label = params.pop("label", None)
 
     tx.run(CREATE_DIRECTED_ASSERTION, rid=rid.string, params=params)

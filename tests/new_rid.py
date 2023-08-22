@@ -11,6 +11,8 @@ rel3 = UndirectedRelation.create(members=[rid.string])
 
 
 print(rel.read())
+print(rel2.read())
+print(rel3.read())
 
 asrt = UndirectedAssertion.create(name="new assrtion", data="sup", members=[rel.string, rel2.string])
 print(asrt.read())

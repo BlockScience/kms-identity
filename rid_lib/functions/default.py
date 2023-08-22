@@ -1,6 +1,7 @@
-from ..core import function
+from ..core import function, RID
 from ..exceptions import *
 from ..table import lookup
+import api
 
 @function(constructor=True)
 def from_string(_, context):
@@ -14,3 +15,10 @@ def from_string(_, context):
     RID = lookup(symbol)
 
     return RID(reference)
+
+@function()
+def create_object(rid, context):
+    api.database.create_object(rid)
+    data = rid.dereference()
+    api.database.refresh_object(rid, data)
+    return data
