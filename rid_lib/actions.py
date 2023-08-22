@@ -45,3 +45,7 @@ HackMD.set_actions({
     "transform": transform_hackmd,
     "dereference": dereference_hackmd
 })
+
+Test.set_actions({
+    "dereference": test_action
+})

@@ -20,3 +20,6 @@ class HackMD(RID):
 
 class Slack(RID):
     symbol = "slack"
+
+class Test(RID):
+    symbol = "test"
