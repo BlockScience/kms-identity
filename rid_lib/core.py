@@ -1,14 +1,33 @@
 from rid_lib.exceptions import *
-from abc import ABC, abstractmethod
+import functools
 import jsonschema
 from jsonschema.exceptions import ValidationError
 
-class RID:
-    def __init__(self, means, reference):
-        self.means = means
+class ConstructorAccessMetaClass(type):
+    def __getattr__(cls, name):
+        action = cls.actions[name]
+
+        def func(ctx=None, **kwargs):
+            if ctx is None:
+                ctx = kwargs
+            else:
+                ctx.update(kwargs)
+
+            return action(cls, ctx)
+        return func
+
+class RID(metaclass=ConstructorAccessMetaClass):
+    symbol: str
+    label: str
+    actions: dict
+
+    def __init__(self, reference):
         self.reference = reference
 
-    # alias "ref" for "reference"
+    @property
+    def means(self):
+        return self.symbol
+
     @property
     def ref(self):
         return self.reference
@@ -28,66 +47,71 @@ class RID:
         return f"RID object {(self.means, self.reference)}"
     
     def __eq__(self, other):
-        if isinstance(other, RID):
-            return (self.means == other.means) and (self.reference == other.reference)
+        if isinstance(other, self.__class__):
+            return self.reference == other.reference
         return False
-
-    @classmethod
-    def from_string(cls, rid_str):
-        # only splits on first ":", will include the rest in the second str segment
-        components = rid_str.split(":", 1)
-        # if there is only one component then there was no means specified
-        if len(components) != 2: 
-            raise IncompleteRIDError
-        
-        means, reference = components
-        return cls(means, reference)
     
-class Means:
-    symbol: str
-    actions: dict
+    def __getattr__(self, name):
+        action = self.actions[name]
 
-class Action(ABC):
-    context_schema = None
+        def func(ctx=None, **kwargs):
+            if not ctx:
+                ctx = kwargs
+            else:
+                ctx.update(kwargs)
 
-    @classmethod
-    def run(cls, rid: RID, context: dict | None = None):
-        # if type(rid) is not RID:
-        #     raise MissingRIDError
-
-        if cls.context_schema:
-            if not context:
-                raise MissingContextError("Context schema set but no context provided")
-
-            try:
-                jsonschema.validate(context, cls.context_schema)
-            except ValidationError as e:
-                raise ContextSchemaValidationError(e.message)
-            
-        return cls.func(rid, context)
+            return action(self, ctx)
+        return func
     
-    @staticmethod
-    @abstractmethod
-    def func(rid, context):
-        raise NotImplementedError
-    
-class Constructor(ABC):
-    context_schema = None
+def function(schema=None):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(rid, context=None):
+            if schema:
+                if context is None:
+                    raise MissingContextError("Context schema set but no context provided")
+                
+                try:
+                    jsonschema.validate(context, schema)
+                except ValidationError as e:
+                    raise ContextSchemaValidationError(e.message)
 
-    @classmethod
-    def run(cls, means, context: dict | None = None):
-        if cls.context_schema:
-            if not context:
-                raise MissingContextError("Context schema set but no context provided")
+            return func(rid, context)
+        return wrapper
+    return decorator
 
-            try:
-                jsonschema.validate(context, cls.context_schema)
-            except ValidationError as e:
-                raise ContextSchemaValidationError(e.message)
-        
-        return cls.func(means, context)
+def constructor(schema=None):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(means, context=None):
+            if schema:
+                if context is None:
+                    raise MissingContextError("Context schema set but no context provided")
+                
+                try:
+                    jsonschema.validate(context, schema)
+                except ValidationError as e:
+                    raise ContextSchemaValidationError(e.message)
 
-    @staticmethod
-    @abstractmethod
-    def func(cls, context):
-        raise NotImplementedError
+            return func(means, context)
+        return wrapper
+    return decorator
+
+
+
+# obj = HackMD("uUm16q1oQDmN8T0m9FABNA")
+
+# print(obj.dereference())
+
+# print(obj.transform({"means": "url"}))
+
+# rel = UndirectedRelation.create(
+#     name = "Relation",
+#     members = [
+#         "hackmd:XVaejEw-QaCghV1Tkv3eVQ",
+#         "hackmd:y302YrhfRXm64j_51fbEGA",
+#         "hackmd:ynez1CzJS6KPRByPzCwhfA"
+#     ]
+# )
+
+# print(rel)

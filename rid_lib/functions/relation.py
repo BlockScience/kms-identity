@@ -1,4 +1,4 @@
-from rid_lib.core import Action, Constructor, RID
+from rid_lib.core import Action, Constructor
 from rid_lib.symbols import *
 from api.schema import *
 import api
@@ -32,4 +32,4 @@ class ReadRelation(Action):
 class DeleteRelation(Action):
     @staticmethod
     def func(rid, context):
-        api.database.delete_assertion(rid)
+        api.database.delete_relation(rid)

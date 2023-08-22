@@ -1,55 +1,19 @@
-from rid_lib.core import Means
-from rid_lib.symbols import *
-from rid_lib.functions import *
+from rid_lib.core import RID
 
-class UndirectedRelation(Means):
-    symbol = UNDIRECTED_RELATION
-    actions = {
-        "create": CreateUndirectedRelation,
-        "read": ReadRelation,
-        "delete": DeleteRelation
-    }
+class UndirectedRelation(RID):
+    symbol = "und_rel"
 
-class DirectedRelation(Means):
-    symbol = DIRECTED_RELATION
-    actions = {
-        "create": CreateDirectedRelation,
-        "read": ReadRelation,
-        "delete": DeleteRelation
-    }
+class DirectedRelation(RID):
+    symbol = "dir_rel"
 
-class UndirectedAssertion(Means):
-    symbol = UNDIRECTED_ASSERTION
-    actions = {
-        "create": CreateUndirectedAssertion,
-        "fork": ForkAssertion,
-        "read": ReadAssertion,
-        "update": UpdateAssertion,
-        "update_members": UpdateUndirectedAssertionMembers,
-        "delete": DeleteAssertion
-    }
+class UndirectedAssertion(RID):
+    symbol = "und_asrt"
 
-class DirectedAssertion(Means):
-    symbol = DIRECTED_ASSERTION
-    actions = {
-        "create": CreateDirectedAssertion,
-        "fork": ForkAssertion,
-        "read": ReadAssertion,
-        "update": UpdateAssertion,
-        "update_members": UpdateDirectedAssertionMembers,
-        "delete": DeleteAssertion
-    }
+class DirectedAssertion(RID):
+    symbol = "dir_asrt"
 
-class HackMD(Means):
-    symbol = HACKMD
-    actions = {
-        "dereference": DereferenceHackmd,
-        "transform": TransformHackmd
-    }
+class HackMd(RID):
+    symbol = "hackmd"
 
-class URL(Means):
-    symbol = URL
-    actions = {
-        "dereference": DereferenceUrl,
-        "transform": TransformUrl
-    }
+class Url(RID):
+    symbol = "url"
