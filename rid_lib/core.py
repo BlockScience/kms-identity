@@ -25,9 +25,9 @@ class ConstructorAccessMetaClass(type):
 
 
 class RID(metaclass=ConstructorAccessMetaClass):
-    symbol: str
-    label: str
-    actions: dict
+    symbol: str = "object"
+    label: str = "Object"
+    actions: dict = {}
 
     def __init__(self, reference):
         self.reference = reference

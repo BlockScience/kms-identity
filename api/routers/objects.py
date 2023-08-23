@@ -16,21 +16,23 @@ def create_object(obj: dict):
     transform = obj.get("transform", None)
 
     if type(rid_field) == str:
-        rid = RID.from_string(rid_field)
+        rid_str = rid_field
     elif type(rid_field) == list:
-        rid = RID(*rid_field)
+        rid_str = ":".join(rid_field)
     elif type(rid_field) == dict:
-        rid = RID(**rid_field)
+        rid_str = f"{rid_field['means']}:{rid_field['reference']}"
     else:
         return "Invalid RID format (this shouldn't happen)"
     
+    rid = RID.from_string(rid=rid_str)
+    
     if transform:
-        rid = rid_lib.utils.transform(rid, transform)
+        rid = rid.transform(means=transform)
 
     obj = database.create_object(rid)
 
     try:
-        data = rid_lib.utils.dereference(rid)
+        data = rid.dereference()
         if data:
             database.refresh_object(rid, data)
     except Exception as e:

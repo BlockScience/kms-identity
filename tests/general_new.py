@@ -51,16 +51,16 @@ asr1.update_members({
     "add": [obj2.string, obj3.string]
 })
 
-asr2.update_members({
-    "add": {
+asr2.update_members(
+    add =  {
         "from": [obj2.string],
         "to": [obj4.string, obj5.string]
     },
-    "remove": {
+    remove = {
         "from": [obj4.string, obj5.string],
         "to": [obj2.string]
     }
-})
+)
 
 asr1.fork()
 asr2.fork()
