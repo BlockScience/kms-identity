@@ -1,16 +1,17 @@
 from fastapi import APIRouter, HTTPException
-from rid_lib import RID, actions
-from rid_lib.exceptions import (
-    IncompleteRIDError,
-    MeansNotFoundError,
-    ActionNotFoundError
-)
+from base64 import urlsafe_b64decode
+from rid_lib.means import RID,Object
 
 router = APIRouter()
 
 @router.post("/{rid_str}/{action_str}")
-def generic_endpoint(rid_str, action_str, context: dict | None = None):
-    rid = RID.from_string(rid=rid_str)
+def generic_endpoint(rid_str, action_str, context: dict | None = None, use_base64: bool = False):
+    if use_base64:
+        rid_bytes = rid_str.encode()
+        rid_str = urlsafe_b64decode(rid_bytes).decode()
+
+    rid = Object.from_string(rid=rid_str)
+
     result = getattr(rid, action_str)(context)
 
     if isinstance(result, RID):

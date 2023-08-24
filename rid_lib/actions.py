@@ -38,7 +38,7 @@ DirectedAssertion.set_actions({
 
 URL.set_actions({
     "transform": transform_url,
-    "dereference": dereference_hackmd
+    "dereference": dereference_url
 })
 
 HackMD.set_actions({

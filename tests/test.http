@@ -11,4 +11,12 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/hackmd:uUm16q1oQDmN8T0m9FABNA/dereference HTTP/1.1
+POST http://localhost:8000/dXJsOmh0dHBzOi8vaGFja21kLmlvL3VVbTE2cTFvUURtTjhUMG05RkFCTkE=/transform?use_base64=true
+
+{
+    "means": "hackmd"
+}
+
+###
+
+POST http://localhost:8000/hackmd:uUm16q1oQDmN8T0m9FABNA/dereference
