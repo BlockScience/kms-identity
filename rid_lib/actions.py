@@ -1,7 +1,7 @@
 from .means import *
 from .functions import *
 
-RID.set_actions({
+Object.set_actions({
     "from_string": from_string,
     "ingress": create_object
 })
@@ -44,8 +44,4 @@ URL.set_actions({
 HackMD.set_actions({
     "transform": transform_hackmd,
     "dereference": dereference_hackmd
-})
-
-Test.set_actions({
-    "dereference": test_action
 })

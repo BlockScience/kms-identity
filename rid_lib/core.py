@@ -25,9 +25,9 @@ class ConstructorAccessMetaClass(type):
 
 
 class RID(metaclass=ConstructorAccessMetaClass):
-    symbol: str = "object"
-    label: str = "Object"
-    actions: dict = {}
+    symbol: str = None
+    label: str = None
+    actions: dict = None
 
     def __init__(self, reference):
         self.reference = reference
@@ -48,7 +48,7 @@ class RID(metaclass=ConstructorAccessMetaClass):
         return self.symbol + ":" + self.reference
     
     def __repr__(self):
-        return f"{type(self).__name__} object {self.string}"
+        return f"{type(self).__name__} object '{self.string}'"
     
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -76,11 +76,17 @@ class RID(metaclass=ConstructorAccessMetaClass):
     
     @classmethod
     def set_actions(cls, actions):
-        if cls == RID:
+        if cls.__base__ == RID:
             cls.actions = {}
         else:
             cls.actions = cls.__base__.actions.copy()
         cls.actions.update(actions)
+
+    @classmethod
+    def new_subtype(cls, symbol, name=None):
+        if not name:
+            name = symbol.capitalize()
+        return type(name, (cls,), {"symbol": symbol})
 
 def function(constructor=False, schema=None):
     def decorator(func):

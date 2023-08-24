@@ -24,3 +24,6 @@ class ActionNotFoundError(Exception):
 
 class ActionTypeError(Exception):
     pass
+
+class UnsupportedMeansError(Exception):
+    pass

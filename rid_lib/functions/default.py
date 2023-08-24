@@ -1,10 +1,11 @@
-from ..core import function, RID
+from ..core import function
+from ..means import Object
 from ..exceptions import *
-from ..table import lookup
+from .. import table
 import api
 
 @function(constructor=True)
-def from_string(_, context):
+def from_string(cls, context):
     rid_str = context["rid"]
     components = rid_str.split(":", 1)
 
@@ -12,13 +13,32 @@ def from_string(_, context):
         raise IncompleteRIDError
     
     symbol, reference = components
-    RID = lookup(symbol)
 
-    return RID(reference)
+    # matches existing Means class, or creates temporary Object subtype
+    try:
+        Means = table.lookup(symbol)
+    except MeansNotFoundError:
+        Means = Object.new_subtype(symbol)
+
+    # Object is a generic Means class that either returns a valid matching Means or generates a temp placeholder
+    if cls is Object:
+        return Means(reference)
+    
+    # For all derived means classes, the from_string action will only work if the symbol matches that class (ie 'url:https://google.com' will only be valid when passed into URL.from_string)
+    # To input arbitrary RIDs, use Object.from_string
+    if cls is Means:
+        return cls(reference)
+    else:
+        raise UnsupportedMeansError(f"The 'from_string' constructor can only be called on '{cls.__name__}' when the RID string uses the '{cls.symbol}' means. To construct arbitrary RID strings, use the generic Object class.")
+
 
 @function()
 def create_object(rid, context):
     api.database.create_object(rid)
-    data = rid.dereference()
-    api.database.refresh_object(rid, data)
-    return data
+
+    try:
+        data = rid.dereference()
+        api.database.refresh_object(rid, data)
+        return data
+    except ActionNotFoundError:
+        return None

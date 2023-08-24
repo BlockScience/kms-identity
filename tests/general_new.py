@@ -12,9 +12,9 @@ obj2.ingress()
 obj3 = URL("https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw").transform(means=HackMD.symbol)
 obj3.ingress()
 
-obj4 = RID.from_string(rid="test:one")
+obj4 = Object.from_string(rid="test:one")
 obj4.ingress()
-obj5 = RID.from_string(rid="test:two")
+obj5 = Object.from_string(rid="test:two")
 obj5.ingress()
 
 rel1 = UndirectedRelation.create(

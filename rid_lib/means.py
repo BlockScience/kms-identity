@@ -1,5 +1,8 @@
 from .core import RID
 
+class Object(RID):
+    symbol = "object"
+
 class UndirectedRelation(RID):
     symbol = "und_rel"
 
@@ -12,14 +15,11 @@ class UndirectedAssertion(RID):
 class DirectedAssertion(RID):
     symbol = "dir_asrt"
 
-class URL(RID):
+class URL(Object):
     symbol = "url"
 
-class HackMD(RID):
+class HackMD(Object):
     symbol = "hackmd"
 
 class Slack(RID):
     symbol = "slack"
-
-class Test(RID):
-    symbol = "test"
