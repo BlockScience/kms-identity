@@ -40,6 +40,17 @@ class RID(metaclass=ConstructorAccessMetaClass):
     def ref(self):
         return self.reference
     
+    @classmethod
+    def get_labels(cls):
+        if cls == RID:
+            return ()
+        else:
+            return (cls.__name__, *cls.__base__.get_labels())
+
+    @property
+    def labels(self):
+        return self.means.get_labels()
+    
     @property
     def string(self):
         return str(self)
