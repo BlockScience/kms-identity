@@ -1,4 +1,4 @@
-import functools, re
+import functools, re, traceback
 import jsonschema
 from jsonschema.exceptions import ValidationError
 from fastapi import HTTPException, status
@@ -26,6 +26,7 @@ def pass_exceptions(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
+            print(traceback.format_exc())
             exception_name = type(e).__name__
             raise HTTPException(
                 status_code=400,
