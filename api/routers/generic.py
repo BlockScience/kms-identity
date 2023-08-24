@@ -1,10 +1,12 @@
 from fastapi import APIRouter, HTTPException
 from base64 import urlsafe_b64decode
 from rid_lib.means import RID,Object
+from api.utils import pass_exceptions
 
 router = APIRouter()
 
 @router.post("/{rid_str}/{action_str}")
+@pass_exceptions
 def generic_endpoint(rid_str, action_str, context: dict | None = None, use_base64: bool = False):
     if use_base64:
         rid_bytes = rid_str.encode()

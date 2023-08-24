@@ -20,6 +20,19 @@ def execute_write(func):
             return session.execute_write(func, *args, **kwargs)
     return wrapper
 
+def pass_exceptions(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            exception_name = type(e).__name__
+            raise HTTPException(
+                status_code=400,
+                detail=f"{exception_name}: {str(e)}"
+            )
+    return wrapper
+
 def validate_json(schema, instance=None):
     """Decorator to validate JSON body. Uses first kwarg by default, can be overidden by setting instance to the name of the kwarg you want to use."""
     def decorator(func):
