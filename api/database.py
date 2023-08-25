@@ -43,7 +43,12 @@ def create_undirected_relation(tx, rid: RID, params):
     # removes self edges
     member_rids = [m for m in params.pop("members", []) if m != rid.string]
 
-    records = tx.run(CREATE_UNDIRECTED_RELATION, rid=rid.string, params=params, member_rids=member_rids)
+    tx.run(CREATE_OBJECT, rid=rid.string, params=params)
+    
+    for label in rid.labels:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
+
+    records = tx.run(CREATE_MEMBER_EDGES, rid=rid.string, member_rids=member_rids)
     result = records.single()
 
     definition_rid = params.get("definition", None)
@@ -60,8 +65,12 @@ def create_directed_relation(tx, rid: RID, params):
     # removes self edges
     from_rids = [m for m in params.pop("from", []) if m != rid.string]
     to_rids = [m for m in params.pop("to", []) if m != rid.string]
+
+    tx.run(CREATE_OBJECT, rid=rid.string, params=params)
     
-    tx.run(CREATE_DIRECTED_RELATION, rid=rid.string, params=params)
+    for label in rid.labels:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
+    
     from_records = tx.run(CREATE_FROM_EDGES, rid=rid.string, from_rids=from_rids)
     to_records = tx.run(CREATE_TO_EDGES, rid=rid.string, to_rids=to_rids)
 
@@ -140,7 +149,12 @@ def create_undirected_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
     member_rids = params.pop("members", [])
 
-    records = tx.run(CREATE_UNDIRECTED_ASSERTION, rid=rid.string, params=params, member_rids=member_rids)
+    tx.run(CREATE_OBJECT, rid=rid.string, params=params)
+
+    for label in rid.labels:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
+
+    records = tx.run(CREATE_MEMBER_EDGES, rid=rid.string, member_rids=member_rids)
     result = records.single()
 
     members = result.get("members")
@@ -165,7 +179,11 @@ def create_directed_assertion(tx, rid: RID, params):
     from_rids = params.pop("from", [])
     to_rids = params.pop("to", [])
 
-    tx.run(CREATE_DIRECTED_ASSERTION, rid=rid.string, params=params)
+    tx.run(CREATE_OBJECT, rid=rid.string, params=params)
+
+    for label in rid.labels:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
+
     from_records = tx.run(CREATE_FROM_EDGES, rid=rid.string, from_rids=from_rids)
     to_records = tx.run(CREATE_TO_EDGES, rid=rid.string, to_rids=to_rids)
 

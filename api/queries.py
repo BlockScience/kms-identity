@@ -50,27 +50,19 @@ REFRESH_OBJECT = """
 
 # Relation Operations
 
-CREATE_UNDIRECTED = """
-    CREATE (relation:{} {{rid: $rid}}) SET relation += $params  
-    WITH relation  
-    UNWIND $member_rids AS member_rid  
-    MATCH (member) WHERE member.rid = member_rid  
-    CREATE (relation)-[:HAS]->(member)  
-    RETURN COLLECT(member.rid) AS members
-"""
-
-CREATE_DIRECTED = """
-    CREATE (relation:{} {{rid: $rid}}) SET relation += $params
-"""
-      
-CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(UndirectedRelation.label)
-CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(DirectedRelation.label)
-
 SET_DEFINITION = """
     MATCH (relation) WHERE relation.rid = $rid
     MATCH (definition) WHERE definition.rid = $definition_rid
     MERGE (relation)-[:DEFINED_BY]->(definition)
     RETURN definition.rid AS definition
+"""
+
+CREATE_MEMBER_EDGES = """
+    MATCH (relation) WHERE relation.rid = $rid
+    UNWIND $member_rids AS member_rid  
+    MATCH (member) WHERE member.rid = member_rid  
+    CREATE (relation)-[:HAS]->(member)  
+    RETURN COLLECT(member.rid) AS members
 """
 
 CREATE_FROM_EDGES = """
@@ -114,9 +106,6 @@ DELETE_RELATION = """
 """
 
 # Assertion Operations
-
-CREATE_UNDIRECTED_ASSERTION = CREATE_UNDIRECTED.format(UndirectedAssertion.label)
-CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(DirectedAssertion.label)
 
 UPDATE_ASSERTION = """
     MATCH (assertion)  
