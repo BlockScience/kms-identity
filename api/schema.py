@@ -1,3 +1,13 @@
+OBJECT_JSON_ENDPOINT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "rid": {"type": "string"},
+        "action": {"type": "string"},
+        "context": {"type": "object"}
+    },
+    "required": ["rid", "action"]
+}
+
 OBJECT_SCHEMA = {
     "type": "object",
     "properties": {

@@ -214,12 +214,12 @@ def fork_assertion(tx, rid: RID, new_rid: RID):
 
         match action:
             case TX.CREATE_UNDIRECTED:
-                member_rids = data.pop("members")
+                member_rids = data.pop("members", [])
                 tx.run(CREATE_UNDIRECTED_ASSERTION, rid=new_rid.string, params=data, member_rids=member_rids)
 
             case TX.CREATE_DIRECTED:
-                from_rids = data.pop("from")
-                to_rids = data.pop("to")
+                from_rids = data.pop("from", [])
+                to_rids = data.pop("to", [])
                 tx.run(CREATE_DIRECTED_ASSERTION, rid=new_rid.string, params=data)
                 tx.run(CREATE_FROM_EDGES, rid=new_rid.string, from_rids=from_rids)
                 tx.run(CREATE_TO_EDGES, rid=new_rid.string, to_rids=to_rids)
