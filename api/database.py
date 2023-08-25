@@ -148,6 +148,7 @@ def delete_relation(tx, rid: RID):
 def create_undirected_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
     member_rids = params.pop("members", [])
+    definition_rid = params.get("definition", None)
 
     tx.run(CREATE_OBJECT, rid=rid.string, params=params)
 
@@ -160,11 +161,11 @@ def create_undirected_assertion(tx, rid: RID, params):
     members = result.get("members")
 
     tx.run(INIT_TRANSACTION, rid=rid.string, params={
-        "action": TX.CREATE_UNDIRECTED,
-        "data": json_data
+        "means": rid.means.symbol,
+        "action": "create",
+        "context": json_data
     })
 
-    definition_rid = params.get("definition", None)
     if definition_rid and (definition_rid != rid.string):
         tx.run(SET_DEFINITION, rid=rid.string, definition_rid=definition_rid)
 
@@ -195,8 +196,9 @@ def create_directed_assertion(tx, rid: RID, params):
         tx.run(SET_DEFINITION, rid=rid.string, definition_rid=definition_rid)
 
     tx.run(INIT_TRANSACTION, rid=rid.string, params={
-        "action": TX.CREATE_DIRECTED,
-        "data": json_data
+        "means": rid.means.symbol,
+        "action": "create",
+        "context": json_data
     })
 
     return rid, {
@@ -213,43 +215,62 @@ def fork_assertion(tx, rid: RID, new_rid: RID):
 
     for record in tx_records:
         transaction = record["tx"]._properties
+        
+        context_json = transaction.get("context", None)
 
-        action = transaction["action"]
-        data = transaction.get("data", None)
+        if context_json:
+            transaction["context"] = json.loads(context_json)
 
-        history.append({
-            "action": action,
-            "data": json.loads(data) if data else None
-        })
+        history.append(transaction)
 
     history.reverse()
 
     for transaction in history:
+        means = transaction["means"]
         action = transaction["action"]
-        data = transaction.get("data", None)
+        context = transaction.get("context", None)
 
-        # overwrite rid from forked assertion
-        if "rid" in data:
-            data["rid"] = rid
+        match (means, action):
+            case (UndirectedAssertion.symbol, "create"):
+                member_rids = context.pop("members", [])
+                definition_rid = context.pop("definition", None)
+                
+                tx.run(CREATE_OBJECT, rid=new_rid.string, params=context)
+                for label in rid.labels:
+                    tx.run(SET_LABEL.format(label), rid=new_rid.string)
+                tx.run(CREATE_MEMBER_EDGES, rid=new_rid.string, member_rids=member_rids)
+                
+                if definition_rid and (definition_rid != new_rid.string):
+                    tx.run(SET_DEFINITION, rid=new_rid.string, definition_rid=definition_rid)
 
-        match action:
-            case TX.CREATE_UNDIRECTED:
-                member_rids = data.pop("members", [])
-                tx.run(CREATE_UNDIRECTED_ASSERTION, rid=new_rid.string, params=data, member_rids=member_rids)
+            case (DirectedAssertion.symbol, "create"):
+                from_rids = context.pop("from", [])
+                to_rids = context.pop("to", [])
+                definition_rid = context.pop("definition", None)
 
-            case TX.CREATE_DIRECTED:
-                from_rids = data.pop("from", [])
-                to_rids = data.pop("to", [])
-                tx.run(CREATE_DIRECTED_ASSERTION, rid=new_rid.string, params=data)
+                tx.run(CREATE_OBJECT, rid=new_rid.string, params=context)
+                for label in rid.labels:
+                    tx.run(SET_LABEL.format(label), rid=new_rid.string)
                 tx.run(CREATE_FROM_EDGES, rid=new_rid.string, from_rids=from_rids)
                 tx.run(CREATE_TO_EDGES, rid=new_rid.string, to_rids=to_rids)
 
-            case TX.UPDATE:
-                tx.run(UPDATE_ASSERTION, rid=new_rid.string, params=data)
+                if definition_rid and (definition_rid != new_rid.string):
+                    tx.run(SET_DEFINITION, rid=new_rid.string, definition_rid=definition_rid)
 
-            case TX.UPDATE_UNDIRECTED_MEMBERS:
-                members_to_add = data.get("add", None)
-                members_to_remove = data.get("remove", None)
+            case (_, "update"):
+                tx.run(UPDATE_ASSERTION, rid=new_rid.string, params=context)
+
+            case (_, "update_definition"):
+                definition = context.get("definition", None)
+
+                if definition:
+                    tx.run(SET_DEFINITION, rid=new_rid.string, definition_rid=definition)
+                else:
+                    tx.run(REMOVE_DEFINITION, rid=new_rid.string)
+
+            case (UndirectedAssertion.symbol, "update_members"):
+                members_to_add = context.get("add", None)
+                members_to_remove = context.get("remove", None)
 
                 if members_to_add:
                     tx.run(ADD_MEMBERS_TO_UNDIRECTED_ASSERTION, rid=new_rid.string, member_rids=members_to_add)
@@ -257,9 +278,9 @@ def fork_assertion(tx, rid: RID, new_rid: RID):
                 if members_to_remove:
                     tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=new_rid.string, member_rids=members_to_remove)
             
-            case TX.UPDATE_DIRECTED_MEMBERS:
-                members_to_add = data.get("add", None)
-                members_to_remove = data.get("remove", None)
+            case (DirectedAssertion.symbol, "update_members"):
+                members_to_add = context.get("add", None)
+                members_to_remove = context.get("remove", None)
 
                 if members_to_add:
                     from_members_to_add = members_to_add.get("from", None)
@@ -283,10 +304,8 @@ def fork_assertion(tx, rid: RID, new_rid: RID):
 
 
     tx.run(FORK_TRANSACTION, forked_rid=rid.string, new_rid=new_rid.string, params={
-        "action": TX.FORK,
-        "data": json.dumps({
-            "rid": new_rid.string
-        })
+        "means": rid.means.symbol,
+        "action": "fork"
     })
 
     return new_rid
@@ -295,13 +314,14 @@ def fork_assertion(tx, rid: RID, new_rid: RID):
 def update_assertion(tx, rid: RID, params):
     tx.run(UPDATE_ASSERTION, rid=rid.string, params=params)
     tx.run(ADD_TRANSACTION, rid=rid.string, params={
-        "action": TX.UPDATE,
-        "data": json.dumps(params)
+        "means": rid.means.symbol,
+        "action": "update",
+        "context": json.dumps(params)
     })
 
 @execute_write
 def update_assertion_definition(tx, rid: RID, params):
-    definition = params.get("definition")
+    definition = params.get("definition", None)
 
     if definition:
         tx.run(SET_DEFINITION, rid=rid.string, definition_rid=definition)
@@ -309,8 +329,9 @@ def update_assertion_definition(tx, rid: RID, params):
         tx.run(REMOVE_DEFINITION, rid=rid.string)
 
     tx.run(ADD_TRANSACTION, rid=rid.string, params={
-        "action": TX.UPDATE_DEFINITION,
-        "data": json.dumps(params)
+        "means": rid.means.symbol,
+        "action": "update_definition",
+        "context": json.dumps(params)
     })
 
 @execute_write
@@ -328,8 +349,9 @@ def update_undirected_assertion_members(tx, rid: RID, params):
         tx.run(REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION, rid=rid.string, member_rids=members_to_remove)
 
     tx.run(ADD_TRANSACTION, rid=rid.string, params={
-        "action": TX.UPDATE_UNDIRECTED_MEMBERS,
-        "data": json.dumps(params)
+        "means": rid.means.symbol,
+        "action": "update_members",
+        "context": json.dumps(params)
     })
 
 @execute_write
@@ -361,13 +383,15 @@ def update_directed_assertion_members(tx, rid: RID, params):
             tx.run(REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION, rid=rid.string, member_rids=to_members_to_remove)
 
     tx.run(ADD_TRANSACTION, rid=rid.string, params={
-        "action": TX.UPDATE_DIRECTED_MEMBERS,
-        "data": json.dumps(params)
+        "means": rid.means.symbol,
+        "action": "update_members",
+        "context": json.dumps(params)
     })
 
 @execute_write
 def delete_assertion(tx, rid: RID):
     tx.run(ADD_TRANSACTION, rid=rid.string, params={
-        "action": TX.DELETE
+        "means": rid.means.symbol,
+        "action": "delete"
     })
     tx.run(DELETE_ASSERTION, rid=rid.string)

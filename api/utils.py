@@ -34,38 +34,6 @@ def pass_exceptions(func):
             )
     return wrapper
 
-def validate_json(schema, instance=None):
-    """Decorator to validate JSON body. Uses first kwarg by default, can be overidden by setting instance to the name of the kwarg you want to use."""
-    def decorator(func):
-        # if using async fastapi functions, wrapper will need to be async as well
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            nonlocal instance
-
-            if not instance:
-                instance = next(iter(kwargs.keys()), None)
-
-            if not instance:
-                raise MissingInstanceError
-
-            if instance not in kwargs:
-                raise InstanceNotFoundError(f"Instance name '{instance}' not found in function params")
-
-            if type(kwargs[instance]) is not dict:
-                raise InstanceValueError("Instance is not of type 'dict'")
-            
-            try:
-                jsonschema.validate(kwargs[instance], schema)
-            except ValidationError as e:
-                print(e.message)
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=e.message
-                )
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
-
 def to_snake_case(symbol):
         return re.sub(r"(?<!^)(?=[A-Z])", r"_", symbol).lower()
 
