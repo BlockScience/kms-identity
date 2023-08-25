@@ -5,7 +5,9 @@ from api.utils import pass_exceptions
 from rid_lib.exceptions import *
 from rid_lib import table
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/object"
+)
 
 @router.post("/{rid_str}/{action_str}")
 @pass_exceptions
@@ -24,7 +26,10 @@ def generic_endpoint(rid_str, action_str, context: dict | None = None, use_base6
     elif len(components) == 2:
         symbol, reference = components
 
-    Means = table.lookup(symbol)
+    try:    
+        Means = table.lookup(symbol)
+    except MeansNotFoundError:
+        Means = Object.new_subtype(symbol)
 
     if reference:
         rid = Means(reference)

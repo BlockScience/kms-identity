@@ -36,6 +36,14 @@ def from_string(cls, context):
 def create_object(rid, context):
     api.database.create_object(rid)
 
+    return rid.refresh()
+    
+@function()
+def read_object(rid, context):
+    return api.database.read_object(rid)
+
+@function()
+def refresh_object(rid, context):
     try:
         data = rid.dereference()
         api.database.refresh_object(rid, data)

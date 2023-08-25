@@ -29,7 +29,8 @@ def refresh_object(tx, rid: RID, params):
 def read_object(tx, rid: RID):
     records = tx.run(READ_OBJECT, rid=rid.string)
     result = records.single()
-    return result.get("result", None)
+    if result:
+        return result.get("result", None)
 
 # Relation Operations
 

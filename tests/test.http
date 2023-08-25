@@ -11,7 +11,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/dXJsOmh0dHBzOi8vaGFja21kLmlvL3VVbTE2cTFvUURtTjhUMG05RkFCTkE=/transform?use_base64=true
+POST http://localhost:8000/object/hackmd:uUm16q1oQDmN8T0m9FABNA/ingress
 
 {
     "means": "hackmd"
@@ -19,4 +19,15 @@ POST http://localhost:8000/dXJsOmh0dHBzOi8vaGFja21kLmlvL3VVbTE2cTFvUURtTjhUMG05R
 
 ###
 
-POST http://localhost:8000/hackmd:uUm16q1oQDmN8T0m9FABNA/dereference
+POST http://localhost:8000/object/dW5kX3JlbDpISG1qbkF2eElpUjVUMlkwWWRBYzA=/read?use_base64=true
+
+###
+
+
+POST http://localhost:8000/object/dir_rel/create
+
+{
+    "name": "Directed Relation",
+    "from": ["hackmd:uUm16q1oQDmN8T0m9FABNA"],
+    "to": ["url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA"]
+}

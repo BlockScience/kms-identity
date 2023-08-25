@@ -3,7 +3,9 @@ from .functions import *
 
 Object.set_actions({
     "from_string": from_string,
-    "ingress": create_object
+    "ingress": create_object,
+    "read": read_object,
+    "refresh": refresh_object
 })
 
 UndirectedRelation.set_actions({
