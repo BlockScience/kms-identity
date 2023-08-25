@@ -208,6 +208,26 @@ def create_directed_assertion(tx, rid: RID, params):
     }
 
 @execute_write
+def read_transactions(tx, rid: RID):
+    tx_records = tx.run(READ_TRANSACTIONS, rid=rid.string)
+
+    history = []
+
+    for record in tx_records:
+        transaction = record["tx"]._properties
+        
+        context_json = transaction.get("context", None)
+
+        if context_json:
+            transaction["context"] = json.loads(context_json)
+
+        history.append(transaction)
+
+    history.reverse()
+
+    return history
+
+@execute_write
 def fork_assertion(tx, rid: RID, new_rid: RID):
     tx_records = tx.run(READ_TRANSACTIONS, rid=rid.string)
 

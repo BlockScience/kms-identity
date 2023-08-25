@@ -66,6 +66,7 @@ DIRECTED_RELATION_SCHEMA = {
 UNDIRECTED_ASSERTION_SCHEMA = {
     "type": "object",
     "properties": {
+        "reference": {"type": "string"},
         "name": {"type": "string"},
         "description": {"type": "string"},
         "definition": {"type": ["string", "null"]},
@@ -79,6 +80,7 @@ UNDIRECTED_ASSERTION_SCHEMA = {
 DIRECTED_ASSERTION_SCHEMA = {
     "type": "object",
     "properties": {
+        "reference": {"type": "string"},
         "name": {"type": "string"},
         "description": {"type": "string"},
         "definition": {"type": ["string", "null"]},
