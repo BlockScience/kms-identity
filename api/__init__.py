@@ -11,7 +11,4 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-app.include_router(generic.router)
-# app.include_router(objects.router)
-# app.include_router(relations.router)
-# app.include_router(assertions.router)
+app.include_router(objects.router)
