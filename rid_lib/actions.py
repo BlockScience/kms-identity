@@ -50,6 +50,11 @@ DirectedAssertion.set_actions({
     "refresh": None
 })
 
+Governance.set_actions({
+    "create": create_governance,
+    "act": act
+})
+
 URL.set_actions({
     "transform": transform_url,
     "dereference": dereference_url

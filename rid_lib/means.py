@@ -15,6 +15,9 @@ class UndirectedAssertion(Object):
 class DirectedAssertion(Object):
     symbol = "dir_asrt"
 
+class Governance(DirectedAssertion):
+    symbol = "gov"
+
 class URL(Object):
     symbol = "url"
 

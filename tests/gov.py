@@ -1,50 +1,40 @@
+from rid_lib.means import *
 import api
 
 api.database.drop()
 
-luke = api.objects.create_object(obj={
-    "rid": "user:luke"
-})["rid"]
+luke = Object.from_string(rid="agent:luke")
+luke.ingress()
 
-orion = api.objects.create_object(obj={
-    "rid": "user:orion"
-})["rid"]
+orion = Object.from_string(rid="agent:orion")
+orion.ingress()
 
-func = api.objects.create_object(obj={
-    "rid": "func:gov1"
-})["rid"]
+func = Object.from_string(rid="func:gov1")
+func.ingress()
 
-action1 = api.objects.create_object(obj={
-    "rid": "action:1"
-})["rid"]
+action1 = Object.from_string(rid="action:1")
+action1.ingress()
 
-action2 = api.objects.create_object(obj={
-    "rid": "action:2"
-})["rid"]
+action2 = Object.from_string(rid="action:2")
+action2.ingress()
 
-working_doc = api.objects.create_object(obj={
-    "rid": {
-        "reference": "https://hackmd.io/TBxOcWn_SpWEEcx_t_9GWw?view",
-        "means": "url"
-    },
-    "transform": "hackmd"
-})["rid"]
+working_doc = URL("https://hackmd.io/TBxOcWn_SpWEEcx_t_9GWw?view").transform(means=HackMD.symbol)
+working_doc.ingress()
 
-assertion = api.assertions.create_undirected_assertion(obj={
+assertion = UndirectedAssertion.create({
     "name": "Working Doc",
     "description": "Points to current working doc for identity system development",
-    "members": [working_doc]
-})["rid"]
+    "members": [working_doc.string]
+})
 
-func = api.assertions.create_directed_assertion(obj={
-    "name": "Gov Func",
-    "from": [func],
-    "to": [action1, action2]
-})["rid"]
+# func = DirectedAssertion.create({
+#     "name": "Gov Func",
+#     "from": [func.string],
+#     "to": [action1.string, action2.string]
+# })
 
-gov = api.assertions.create_directed_assertion(obj={
+gov = Governance.create({
     "name": "Working Doc Governance",
-    "definition": func,
-    "from": [luke, orion],
-    "to": [assertion]
+    "assertion": assertion.string,
+    "agents": [luke.string, orion.string],
 })
