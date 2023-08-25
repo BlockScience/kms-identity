@@ -1,11 +1,11 @@
 # Definitions
 
-class LABEL:
-    OBJECT = "Object"
-    RELATION = "Relation"
-    ASSERTION = "Assertion"
-    DIRECTED = "Directed"
-    UNDIRECTED = "Undirected"
+from rid_lib.means import (
+    UndirectedRelation,
+    DirectedRelation,
+    UndirectedAssertion,
+    DirectedAssertion
+)
 
 class TYPE:
     UNDIRECTED_MEMBER = "HAS"
@@ -26,18 +26,24 @@ class TX:
 # Object Operations
 
 CREATE_OBJECT = """
-    MERGE (object:Object {rid: $rid})
+    MERGE (object {rid: $rid})
     SET object += $params
     RETURN object
 """
 
+SET_LABEL = """
+    MATCH (node)
+    WHERE node.rid = $rid
+    SET node:{}
+"""
+
 READ_OBJECT = """
-    MATCH (o:Object {rid: $rid})-[:REFERS_TO]->(d)  
+    MATCH (o {rid: $rid})-[:REFERS_TO]->(d)  
     RETURN {rid: o.rid, data: properties(d)} AS result
 """
 
 REFRESH_OBJECT = """
-    MERGE (o:Object {rid: $rid})  
+    MERGE (o {rid: $rid})  
     MERGE (o)-[:REFERS_TO]->(d:Data)  
     SET d = $params
 """
@@ -45,7 +51,7 @@ REFRESH_OBJECT = """
 # Relation Operations
 
 CREATE_UNDIRECTED = """
-    CREATE (relation:Undirected:{} {{rid: $rid}}) SET relation += $params  
+    CREATE (relation:{} {{rid: $rid}}) SET relation += $params  
     WITH relation  
     UNWIND $member_rids AS member_rid  
     MATCH (member) WHERE member.rid = member_rid  
@@ -54,21 +60,21 @@ CREATE_UNDIRECTED = """
 """
 
 CREATE_DIRECTED = """
-    CREATE (relation:Directed:{} {{rid: $rid}}) SET relation += $params
+    CREATE (relation:{} {{rid: $rid}}) SET relation += $params
 """
       
-CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(LABEL.RELATION)
-CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(LABEL.RELATION)
+CREATE_UNDIRECTED_RELATION = CREATE_UNDIRECTED.format(UndirectedRelation.label)
+CREATE_DIRECTED_RELATION = CREATE_DIRECTED.format(DirectedRelation.label)
 
 SET_DEFINITION = """
-    MATCH (relation:Relation|Assertion) WHERE relation.rid = $rid
+    MATCH (relation) WHERE relation.rid = $rid
     MATCH (definition) WHERE definition.rid = $definition_rid
     MERGE (relation)-[:DEFINED_BY]->(definition)
     RETURN definition.rid AS definition
 """
 
 CREATE_FROM_EDGES = """
-    MATCH (relation:Directed) WHERE relation.rid = $rid  
+    MATCH (relation) WHERE relation.rid = $rid  
     UNWIND $from_rids AS from_rid  
     MATCH (from_node) WHERE from_node.rid = from_rid  
     CREATE (relation)-[:FROM]->(from_node)  
@@ -76,7 +82,7 @@ CREATE_FROM_EDGES = """
 """
 
 CREATE_TO_EDGES = """
-    MATCH (relation:Directed) WHERE relation.rid = $rid  
+    MATCH (relation) WHERE relation.rid = $rid  
     UNWIND $to_rids AS to_rid  
     MATCH (to_node) WHERE to_node.rid = to_rid  
     CREATE (relation)-[:TO]->(to_node)  
@@ -84,54 +90,48 @@ CREATE_TO_EDGES = """
 """
 
 READ_RELATION = """
-    MATCH (relation:Relation|Assertion)  
+    MATCH (relation)  
     WHERE relation.rid = $rid  
     RETURN relation
 """
 
 READ_UNDIRECTED_RELATION = """
-    MATCH (relation:Undirected)-[:HAS]->(object)  
+    MATCH (relation)-[:HAS]->(object)  
     WHERE relation.rid = $rid  
     RETURN object.rid AS object
 """
 
 READ_DIRECTED_RELATION = """
-    MATCH (relation:Directed)-[e:TO|FROM]->(object)  
+    MATCH (relation)-[e:TO|FROM]->(object)  
     WHERE relation.rid = $rid  
     RETURN type(e) AS type, object.rid AS object
 """
 
 DELETE_RELATION = """
-    MATCH (relation:Relation)  
+    MATCH (relation)  
     WHERE relation.rid = $rid  
     DETACH DELETE relation
 """
 
 # Assertion Operations
 
-CREATE_UNDIRECTED_ASSERTION = CREATE_UNDIRECTED.format(LABEL.ASSERTION)
-CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(LABEL.ASSERTION)
-
-SET_LABEL = """
-    MATCH (assertion:Assertion)
-    WHERE assertion.rid = $rid
-    SET assertion :{}
-"""
+CREATE_UNDIRECTED_ASSERTION = CREATE_UNDIRECTED.format(UndirectedAssertion.label)
+CREATE_DIRECTED_ASSERTION = CREATE_DIRECTED.format(DirectedAssertion.label)
 
 UPDATE_ASSERTION = """
-    MATCH (assertion:Assertion)  
+    MATCH (assertion)  
     WHERE assertion.rid = $rid  
     SET assertion += $params
 """
 
 REMOVE_DEFINITION = """
-    MATCH (assertion:Assertion)-[edge:DEFINED_BY]->(definition)
+    MATCH (assertion)-[edge:DEFINED_BY]->(definition)
     WHERE assertion.rid = $rid
     DELETE edge
 """
 
 ADD_MEMBERS_TO_ASSERTION = """
-    MATCH (assertion:{}:Assertion)  
+    MATCH (assertion:{})  
     WHERE assertion.rid = $rid  
     UNWIND $member_rids AS member_rid  
     MATCH (member) WHERE member.rid = member_rid  
@@ -140,7 +140,7 @@ ADD_MEMBERS_TO_ASSERTION = """
 """
 
 REMOVE_MEMBERS_FROM_ASSERTION = """
-    MATCH (assertion:{}:Assertion)  
+    MATCH (assertion:{})  
     WHERE assertion.rid = $rid  
     UNWIND $member_rids AS member_rid  
     MATCH (assertion)-[edge:{}]->(member) WHERE member.rid = member_rid  
@@ -149,50 +149,50 @@ REMOVE_MEMBERS_FROM_ASSERTION = """
 """
 
 ADD_MEMBERS_TO_UNDIRECTED_ASSERTION = ADD_MEMBERS_TO_ASSERTION.format(
-    LABEL.UNDIRECTED, TYPE.UNDIRECTED_MEMBER)
+    UndirectedAssertion.label, TYPE.UNDIRECTED_MEMBER)
 
 REMOVE_MEMBERS_FROM_UNDIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format(
-    LABEL.UNDIRECTED, TYPE.UNDIRECTED_MEMBER
+    UndirectedAssertion.label, TYPE.UNDIRECTED_MEMBER
 )
 
 ADD_FROM_MEMBERS_TO_DIRECTED_ASSERTION = ADD_MEMBERS_TO_ASSERTION.format(
-    LABEL.DIRECTED, TYPE.DIRECTED_FROM_MEMBER
+    DirectedAssertion.label, TYPE.DIRECTED_FROM_MEMBER
 )
 
 ADD_TO_MEMBERS_TO_DIRECTED_ASSERTION = ADD_MEMBERS_TO_ASSERTION.format(
-    LABEL.DIRECTED, TYPE.DIRECTED_TO_MEMBER
+    DirectedAssertion.label, TYPE.DIRECTED_TO_MEMBER
 )
 
 REMOVE_FROM_MEMBERS_FROM_DIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format(
-    LABEL.DIRECTED, TYPE.DIRECTED_FROM_MEMBER
+    DirectedAssertion.label, TYPE.DIRECTED_FROM_MEMBER
 )
 
 REMOVE_TO_MEMBERS_FROM_DIRECTED_ASSERTION = REMOVE_MEMBERS_FROM_ASSERTION.format(
-    LABEL.DIRECTED, TYPE.DIRECTED_TO_MEMBER
+    DirectedAssertion.label, TYPE.DIRECTED_TO_MEMBER
 )
 
 DELETE_ASSERTION = """
-    MATCH (assertion:Assertion)
+    MATCH (assertion)
     WHERE assertion.rid = $rid
     DETACH DELETE assertion
 """
 
 INIT_TRANSACTION = """
-    MATCH (assertion:Assertion)  
+    MATCH (assertion)  
     WHERE assertion.rid = $rid  
     CREATE (tx:Transaction $params)<-[:IS]-(assertion)  
     RETURN tx
 """
 
 FORK_TRANSACTION = """
-    MATCH (forked:Assertion {rid: $forked_rid})-[:IS]->(prev:Transaction)
-    MATCH (assertion:Assertion {rid: $new_rid})
+    MATCH (forked {rid: $forked_rid})-[:IS]->(prev:Transaction)
+    MATCH (assertion {rid: $new_rid})
     CREATE (prev)<-[:PREV]-(tx:Transaction $params)<-[:IS]-(assertion)
     RETURN tx
 """
 
 ADD_TRANSACTION = """
-    MATCH (assertion:Assertion)-[edge:IS]->(tx:Transaction)  
+    MATCH (assertion)-[edge:IS]->(tx:Transaction)  
     WHERE assertion.rid = $rid  
     DELETE edge  
     CREATE (tx)<-[:PREV]-(ntx:Transaction $params)<-[:IS]-(assertion)  
@@ -200,7 +200,7 @@ ADD_TRANSACTION = """
 """
 
 READ_TRANSACTIONS = """
-    MATCH (assertion:Assertion)-[:IS|PREV*]->(tx:Transaction)
+    MATCH (assertion)-[:IS|PREV*]->(tx:Transaction)
     WHERE assertion.rid = $rid
     RETURN tx
 """

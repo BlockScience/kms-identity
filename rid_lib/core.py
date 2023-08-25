@@ -4,6 +4,20 @@ import jsonschema
 from jsonschema.exceptions import ValidationError
 
 class ConstructorAccessMetaClass(type):
+    @property
+    def label(cls):
+        if cls == RID:
+            return None
+        else:
+            return cls.__name__
+
+    @property
+    def labels(cls):
+        if cls == RID:
+            return ()
+        else:
+            return (cls.__name__, *cls.__base__.labels)
+    
     def __getattr__(cls, name):
         try:
             action = cls.actions[name]
@@ -40,16 +54,13 @@ class RID(metaclass=ConstructorAccessMetaClass):
     def ref(self):
         return self.reference
     
-    @classmethod
-    def get_labels(cls):
-        if cls == RID:
-            return ()
-        else:
-            return (cls.__name__, *cls.__base__.get_labels())
+    @property
+    def label(self):
+        return self.means.label
 
     @property
     def labels(self):
-        return self.means.get_labels()
+        return self.means.labels
     
     @property
     def string(self):

@@ -18,6 +18,10 @@ def create_object(tx, rid: RID):
         "means": rid.means.symbol,
         "reference": rid.reference
     })
+    
+    for label in rid.labels:
+        tx.run(SET_LABEL.format(label), rid=rid.string)
+    
     result = records.single()
     return result.get("object", None)
 
@@ -75,7 +79,7 @@ def create_directed_relation(tx, rid: RID, params):
     }
     
 @execute_read
-def read_relation(tx, rid: RID):
+def read_undirected_relation(tx, rid: RID):
     records = tx.run(READ_RELATION, rid=rid.string)
     result = records.single()
 
@@ -84,40 +88,46 @@ def read_relation(tx, rid: RID):
     
     relation = result.get("relation")
 
-    if "Undirected" in relation.labels:
-        member_records = tx.run(READ_UNDIRECTED_RELATION, rid=rid.string)
-        objects = []
+    member_records = tx.run(READ_UNDIRECTED_RELATION, rid=rid.string)
+    objects = []
 
-        for record in member_records:
-            rid = record.get("object")
-            objects.append(rid)
+    for record in member_records:
+        rid = record.get("object")
+        objects.append(rid)
 
-        return {
-            **relation._properties,
-            "type": "undirected",
-            "members": objects
-        }
+    return {
+        **relation._properties,
+        "members": objects
+    }
 
-    elif "Directed" in relation.labels:
-        member_records = tx.run(READ_DIRECTED_RELATION, rid=rid.string)
-        from_objects = []
-        to_objects = []
+@execute_read
+def read_directed_relation(tx, rid: RID):
+    records = tx.run(READ_RELATION, rid=rid.string)
+    result = records.single()
 
-        for record in member_records:
-            rid = record.get("object")
-            direction = record.get("type")
+    if not result:
+        return None
+    
+    relation = result.get("relation")
 
-            if direction == "FROM":
-                from_objects.append(rid)
-            elif direction == "TO":
-                to_objects.append(rid)
+    member_records = tx.run(READ_DIRECTED_RELATION, rid=rid.string)
+    from_objects = []
+    to_objects = []
 
-        return {
-            **relation._properties,
-            "type": "directed",
-            "from": from_objects,
-            "to": to_objects
-        }
+    for record in member_records:
+        rid = record.get("object")
+        direction = record.get("type")
+
+        if direction == "FROM":
+            from_objects.append(rid)
+        elif direction == "TO":
+            to_objects.append(rid)
+
+    return {
+        **relation._properties,
+        "from": from_objects,
+        "to": to_objects
+    }
     
 @execute_write
 def delete_relation(tx, rid: RID):
@@ -129,13 +139,9 @@ def delete_relation(tx, rid: RID):
 def create_undirected_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
     member_rids = params.pop("members", [])
-    label = params.pop("label", None)
 
     records = tx.run(CREATE_UNDIRECTED_ASSERTION, rid=rid.string, params=params, member_rids=member_rids)
     result = records.single()
-
-    if label:
-        tx.run(SET_LABEL.format(label), rid=rid.string)
 
     members = result.get("members")
 
@@ -158,14 +164,10 @@ def create_directed_assertion(tx, rid: RID, params):
     json_data = json.dumps(params)
     from_rids = params.pop("from", [])
     to_rids = params.pop("to", [])
-    label = params.pop("label", None)
 
     tx.run(CREATE_DIRECTED_ASSERTION, rid=rid.string, params=params)
     from_records = tx.run(CREATE_FROM_EDGES, rid=rid.string, from_rids=from_rids)
     to_records = tx.run(CREATE_TO_EDGES, rid=rid.string, to_rids=to_rids)
-
-    if label:
-        tx.run(SET_LABEL.format(label), rid=rid.string)
 
     from_result = from_records.single()
     to_result = to_records.single()

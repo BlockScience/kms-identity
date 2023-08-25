@@ -3,16 +3,16 @@ from .core import RID
 class Object(RID):
     symbol = "object"
 
-class UndirectedRelation(RID):
+class UndirectedRelation(Object):
     symbol = "und_rel"
 
-class DirectedRelation(RID):
+class DirectedRelation(Object):
     symbol = "dir_rel"
 
-class UndirectedAssertion(RID):
+class UndirectedAssertion(Object):
     symbol = "und_asrt"
 
-class DirectedAssertion(RID):
+class DirectedAssertion(Object):
     symbol = "dir_asrt"
 
 class URL(Object):
@@ -21,5 +21,5 @@ class URL(Object):
 class HackMD(Object):
     symbol = "hackmd"
 
-class Slack(RID):
+class Slack(Object):
     symbol = "slack"

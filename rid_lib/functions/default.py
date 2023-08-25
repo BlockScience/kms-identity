@@ -46,7 +46,10 @@ def read_object(rid, context):
 def refresh_object(rid, context):
     try:
         data = rid.dereference()
-        api.database.refresh_object(rid, data)
-        return data
+        if data:
+            api.database.refresh_object(rid, data)
+            return data
+        else:
+            print("Dereferencing object returned no data")
     except ActionNotFoundError:
         return None

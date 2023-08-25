@@ -4,27 +4,23 @@ import api
 import nanoid
 
 @function(constructor=True, schema=UNDIRECTED_ASSERTION_SCHEMA)
-def create_undirected_assertion(RID, context):
-    rid = RID(nanoid.generate())
+def create_undirected_assertion(Means, context):
+    rid = Means(nanoid.generate())
     api.database.create_undirected_assertion(rid, context)
     return rid
 
 @function(constructor=True, schema=DIRECTED_ASSERTION_SCHEMA)
-def create_directed_assertion(RID, context):
-    rid = RID(nanoid.generate())
+def create_directed_assertion(Means, context):
+    rid = Means(nanoid.generate())
     api.database.create_directed_assertion(rid, context)
     return rid
 
 @function()
 def fork_assertion(rid, context):
-    RID = rid.means
-    new_rid = RID(nanoid.generate())
+    Means = rid.means
+    new_rid = Means(nanoid.generate())
     api.database.fork_assertion(rid, new_rid)
     return new_rid
-
-@function()
-def read_assertion(rid, context):
-    return api.database.read_relation(rid)
 
 @function(schema=UPDATE_ASSERTION_SCHEMA)
 def update_assertion(rid, context):
