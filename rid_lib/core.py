@@ -44,6 +44,9 @@ class RID(metaclass=ConstructorAccessMetaClass):
     actions: dict = None
 
     def __init__(self, reference):
+        if type(reference) is not str:
+            raise InvalidReferenceError(f"Means can only be initialized using a reference string, but a {type(reference)} was passed in")
+
         self.reference = reference
     
     @property

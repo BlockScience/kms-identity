@@ -1,6 +1,9 @@
 class IncompleteRIDError(Exception):
     pass
 
+class InvalidReferenceError(Exception):
+    pass
+
 class MissingRIDError(Exception):
     pass
 

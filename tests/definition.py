@@ -1,59 +1,55 @@
 import api
+from rid_lib.means import *
 
 api.database.drop()
 
-definition1 = api.objects.create_object(obj={
-        "rid": "url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view",
-        "transform": "hackmd"
-    })["rid"]
+definition1 = Object.from_string(rid="url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view").transform(means="hackmd")
+definition1.ingress()
 
-definition2 = api.objects.create_object(obj={
-        "rid": "url:https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw",
-        "transform": "hackmd"
-    })["rid"]
+definition2 = Object.from_string(rid="url:https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw").transform(means="hackmd")
+definition2.ingress()
 
-dummy1 = api.objects.create_object(obj={
-    "rid": "dummy:1"
-})["rid"]
+dummy1 = Object.from_string(rid="dummy:1")
+dummy1.ingress()
 
-dummy2 = api.objects.create_object(obj={
-    "rid": "dummy:2"
-})["rid"]
+dummy2 = Object.from_string(rid="dummy:2")
+dummy2.ingress()
 
-undirected_rel = api.relations.create_undirected_relation(obj={
-    "name": "Undirected",
-    "definition": definition1,
-    "members": [dummy2]
-})["rid"]
+undirected_rel = UndirectedRelation.create(
+    name="Undirected",
+    definition=definition1.string,
+    members=[dummy2.string]
+)
 
-directed_rel = api.relations.create_directed_relation(obj={
+directed_rel = DirectedRelation.create({
     "name": "Directed",
-    "definition": definition2,
-    "from": [dummy1],
-    "to": [dummy2]
-})["rid"]
+    "definition": definition2.string,
+    "from": [dummy1.string],
+    "to": [dummy2.string]
+})
 
-undirected_rel = api.assertions.create_undirected_assertion(obj={
+
+undirected_asrt = UndirectedAssertion.create({
     "name": "Undirected",
     "definition": None,
-    "members": [dummy1]
-})["rid"]
+    "members": [dummy1.string]
+})
 
-directed_rel = api.assertions.create_directed_assertion(obj={
+directed_asrt = DirectedAssertion.create({
     "name": "Directed",
-    "definition": definition2,
-    "from": [dummy1],
-    "to": [dummy2]
-})["rid"]
-
-api.assertions.update_assertion_definition(undirected_rel, obj={
-    "definition": definition2
+    "definition": definition2.string,
+    "from": [dummy1.string],
+    "to": [dummy2.string]
 })
 
-api.assertions.update_assertion_definition(undirected_rel, obj={
-    "definition": definition1
-})
+undirected_asrt.update_definition(
+    definition=definition2.string
+)
 
-api.assertions.update_assertion_definition(directed_rel, obj={
-    "definition": None
-})
+undirected_asrt.update_definition(
+    definition=definition1.string
+)
+
+directed_asrt.update_definition(
+    definition=None
+)
