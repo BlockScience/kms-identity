@@ -1,4 +1,5 @@
 import api
+from rid_lib.means import *
 
 urls = [
   "https://hackmd.io/_t0p8m4KTQKT0NxeYOuB4w",
@@ -225,12 +226,7 @@ urls = [
 api.database.drop()
 
 for url in urls:
-    obj = api.objects.create_object(obj={
-        "rid": {
-            "reference": url,
-            "means": "url"
-        },
-        "transform": "hackmd"
-    })["rid"]
+    obj = URL(url).transform(means="hackmd")
+    obj.ingress()
 
     print(obj)

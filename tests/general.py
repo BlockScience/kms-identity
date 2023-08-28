@@ -1,87 +1,69 @@
+from rid_lib.means import *
 import api
 
 api.database.drop()
 
-obj1 = api.objects.create_object(obj={
-        "rid": "url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view",
-        "transform": "hackmd"
-    })["rid"]
+obj1 = URL("https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view").transform(means=HackMD.symbol)
+obj1.ingress()
 
-obj2 = api.objects.create_object(obj={
-        "rid": ["url", "https://hackmd.io/uUm16q1oQDmN8T0m9FABNA"],
-        "transform": "hackmd"
-    })["rid"]
-obj3 = api.objects.create_object(obj={
-        "rid": {
-            "means": "url",
-            "reference": "https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw"
-        },
-        "transform": "hackmd"
-    })["rid"]
+obj2 = URL("https://hackmd.io/uUm16q1oQDmN8T0m9FABNA").transform(means=HackMD.symbol)
+obj2.ingress()
 
-obj4 = api.objects.create_object(obj={"rid": "test:one"})["rid"]
-obj5 = api.objects.create_object(obj={"rid": "test:two"})["rid"]
+obj3 = URL("https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw").transform(means=HackMD.symbol)
+obj3.ingress()
 
-print(obj1, obj2, obj3, obj4, obj5)
+obj4 = Object.from_string(rid="test:one")
+obj4.ingress()
+obj5 = Object.from_string(rid="test:two")
+obj5.ingress()
 
+rel1 = UndirectedRelation.create(
+    name = "Tag",
+    members = [obj1.string, obj2.string, obj3.string]
+)
 
-rel1 = api.relations.create_undirected_relation(obj={
-    "name": "Tag",
-    "members": [obj1, obj2, obj3]
-})[0].string
-
-rel2 = api.relations.create_directed_relation(obj={
+rel2 = DirectedRelation.create({
     "name": "Class Pattern",
-    "from": [obj4, obj5],
-    "to": [obj2]
-})[0].string
+    "from": [obj4.string, obj5.string],
+    "to": [obj2.string]
+})
 
-asr1 = api.assertions.create_undirected_assertion(obj={
-    "name": "Tag",
-    "members": [obj1, obj2, obj3]
-})[0].string
+asr1 = UndirectedAssertion.create(
+    name = "Tag",
+    members = [obj1.string, obj2.string, obj3.string]
+)
 
-asr2 = api.assertions.create_directed_assertion(obj={
+asr2 = DirectedAssertion.create({
     "name": "Class Pattern",
-    "from": [obj4, obj5],
-    "to": [obj2]
-})[0].string
-
-api.assertions.update_assertion(rid=asr1, obj={"name": "New Name"})
-api.assertions.update_assertion(rid=asr1, obj={"name": "New Name2"})
-api.assertions.update_assertion(rid=asr1, obj={"data": "new data"})
-
-api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-    "remove": [obj2, obj3]
+    "from": [obj4.string, obj5.string],
+    "to": [obj2.string]
 })
 
-api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-    "add": [obj4, obj5]
+asr1.update(name="New Name")
+asr1.update(name="New Name2")
+asr1.update(data="new data")
+asr1.update_members(remove=[obj2.string, obj3.string])
+asr1.update_members({
+    "add": [obj4.string, obj5.string]
+})
+asr1.update_members({
+    "remove": [obj4.string, obj5.string],
+    "add": [obj2.string, obj3.string]
 })
 
-api.assertions.update_undirected_assertion_members(rid=asr1, obj={
-    "remove": [obj4, obj5],
-    "add": [obj2, obj3]
-})
-
-# api.assertions.delete_assertion(rid=asr1)
-
-api.assertions.update_directed_assertion_members(rid=asr2, obj={
-    "add": {
-        "from": [obj2],
-        "to": [obj4, obj5]
+asr2.update_members(
+    add =  {
+        "from": [obj2.string],
+        "to": [obj4.string, obj5.string]
     },
-    "remove": {
-        "from": [obj4, obj5],
-        "to": [obj2]
+    remove = {
+        "from": [obj4.string, obj5.string],
+        "to": [obj2.string]
     }
-})
+)
 
-api.assertions.fork_assertion(forked_rid=asr1)
-api.assertions.fork_assertion(forked_rid=asr2)
+asr1.fork()
+asr2.fork()
 
-rel = api.relations.read_relation(rel1)
-print(rel)
-
-rel = api.relations.read_relation(rel2)
-print(rel)
+print(rel1.read())
+print(rel2.read())
