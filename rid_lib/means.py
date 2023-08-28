@@ -18,6 +18,9 @@ class DirectedAssertion(Object):
 class Governance(DirectedAssertion):
     symbol = "gov"
 
+class Belief(DirectedAssertion):
+    symbol = "belief"
+
 class URL(Object):
     symbol = "url"
 

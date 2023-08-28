@@ -30,6 +30,11 @@ def refresh_object(tx, rid: RID, params):
     tx.run(REFRESH_OBJECT, rid=rid.string, params=params)
 
 @execute_read
+def object_exists(tx, rid: RID):
+    record = tx.run(OBJECT_EXISTS, rid=rid.string)
+    return record.single() is not None
+
+@execute_read
 def read_object(tx, rid: RID):
     records = tx.run(READ_OBJECT, rid=rid.string)
     result = records.single()

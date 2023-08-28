@@ -37,6 +37,10 @@ def create_object(rid, context):
     api.database.create_object(rid)
 
     return rid.refresh()
+
+@function()
+def object_exists(rid, context):
+    return api.database.object_exists(rid)
     
 @function()
 def read_object(rid, context):

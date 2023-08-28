@@ -37,6 +37,11 @@ SET_LABEL = """
     SET node:{}
 """
 
+OBJECT_EXISTS = """
+    MATCH (o {rid: $rid})
+    RETURN o
+"""
+
 READ_OBJECT = """
     MATCH (o {rid: $rid})-[:REFERS_TO]->(d)  
     RETURN {rid: o.rid, data: properties(d)} AS result

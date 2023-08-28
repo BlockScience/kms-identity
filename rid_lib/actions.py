@@ -4,6 +4,7 @@ from .functions import *
 Object.set_actions({
     "from_string": from_string,
     "ingress": create_object,
+    "exists": object_exists,
     "read": read_object,
     "refresh": refresh_object
 })
@@ -53,6 +54,10 @@ DirectedAssertion.set_actions({
 Governance.set_actions({
     "create": create_governance,
     "act": act
+})
+
+Belief.set_actions({
+    "set": set_belief
 })
 
 URL.set_actions({
