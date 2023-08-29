@@ -12,9 +12,6 @@ def create_undirected_assertion(Means, context):
 
     rid = Means(reference)
 
-    print(rid, reference, context)
-
-
     api.database.create_undirected_assertion(rid, context)
     return rid
 

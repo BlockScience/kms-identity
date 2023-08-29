@@ -51,6 +51,10 @@ DirectedAssertion.set_actions({
     "refresh": None
 })
 
+Agent.set_actions({
+    "create": create_agent
+})
+
 Governance.set_actions({
     "create": create_governance,
     "act": act
