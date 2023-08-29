@@ -11,10 +11,11 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8000/object/hackmd:uUm16q1oQDmN8T0m9FABNA/ingress
+POST http://localhost:8000/object
 
 {
-    "means": "hackmd"
+    "rid": "test:four",
+    "action": "ingress"
 }
 
 ###
@@ -23,11 +24,32 @@ POST http://localhost:8000/object/dW5kX3JlbDpISG1qbkF2eElpUjVUMlkwWWRBYzA=/read?
 
 ###
 
+POST http://localhost:8000/object
 
-POST http://localhost:8000/object/dir_rel/create
+{   
+    "rid": "und_asrt:KlkHidvUtv8r-0o2zbHnM",
+    "action": "update",
+    "context": {
+        "name": "Unirected Assertion",
+        "members": null
+    }
+}
+
+###
+
+POST http://localhost:8000/object/
 
 {
-    "name": "Directed Relation",
-    "from": ["hackmd:uUm16q1oQDmN8T0m9FABNA"],
-    "to": ["url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA"]
+    "rid": "dir_asrt:IfnZRHc7ONwh6QCwx4Acb",
+    "action": "fork",
+    "context": {
+        "add": {
+            "to": ["test:one", "test:two"],
+            "from": ["test:three", "test:four"]
+        }
+    }
 }
+
+###
+
+POST http://localhost:8000/object/und_asrt:HzwwZh0mPO-2rsYd2XpZC/read?use_b64=true

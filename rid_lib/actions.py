@@ -3,7 +3,8 @@ from .functions import *
 
 Object.set_actions({
     "from_string": from_string,
-    "ingress": create_object,
+    "observe": create_object,
+    "observe_from_string": observe_from_string,
     "exists": object_exists,
     "read": read_object,
     "refresh": refresh_object

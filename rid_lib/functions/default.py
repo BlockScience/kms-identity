@@ -31,6 +31,11 @@ def from_string(cls, context):
     else:
         raise UnsupportedMeansError(f"The 'from_string' constructor can only be called on '{cls.__name__}' when the RID string uses the '{cls.symbol}' means. To construct arbitrary RID strings, use the generic Object class.")
 
+@function(constructor=True)
+def observe_from_string(cls, context):
+    rid = cls.from_string(context)
+    rid.observe()
+    return rid
 
 @function()
 def create_object(rid, context):

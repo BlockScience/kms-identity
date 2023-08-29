@@ -4,18 +4,18 @@ import api
 api.database.drop()
 
 obj1 = URL("https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view").transform(means=HackMD.symbol)
-obj1.ingress()
+obj1.observe()
 
 obj2 = URL("https://hackmd.io/uUm16q1oQDmN8T0m9FABNA").transform(means=HackMD.symbol)
-obj2.ingress()
+obj2.observe()
 
 obj3 = URL("https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw").transform(means=HackMD.symbol)
-obj3.ingress()
+obj3.observe()
 
 obj4 = Object.from_string(rid="test:one")
-obj4.ingress()
+obj4.observe()
 obj5 = Object.from_string(rid="test:two")
-obj5.ingress()
+obj5.observe()
 
 rel1 = UndirectedRelation.create(
     name = "Tag",

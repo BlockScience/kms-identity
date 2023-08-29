@@ -4,22 +4,22 @@ import api
 api.database.drop()
 
 luke = Object.from_string(rid="agent:luke")
-luke.ingress()
+luke.observe()
 
 orion = Object.from_string(rid="agent:orion")
-orion.ingress()
+orion.observe()
 
 func = Object.from_string(rid="func:gov1")
-func.ingress()
+func.observe()
 
 action1 = Object.from_string(rid="action:1")
-action1.ingress()
+action1.observe()
 
 action2 = Object.from_string(rid="action:2")
-action2.ingress()
+action2.observe()
 
 working_doc = URL("https://hackmd.io/TBxOcWn_SpWEEcx_t_9GWw?view").transform(means=HackMD.symbol)
-working_doc.ingress()
+working_doc.observe()
 
 assertion = UndirectedAssertion.create({
     "name": "Working Doc",

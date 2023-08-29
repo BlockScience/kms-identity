@@ -227,6 +227,6 @@ api.database.drop()
 
 for url in urls:
     obj = URL(url).transform(means="hackmd")
-    obj.ingress()
+    obj.observe()
 
     print(obj)

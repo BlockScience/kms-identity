@@ -4,16 +4,16 @@ from rid_lib.means import *
 api.database.drop()
 
 definition1 = Object.from_string(rid="url:https://hackmd.io/uUm16q1oQDmN8T0m9FABNA?view").transform(means="hackmd")
-definition1.ingress()
+definition1.observe()
 
 definition2 = Object.from_string(rid="url:https://hackmd.io/M2IWdXC_S_OSUHA6zkYFYw").transform(means="hackmd")
-definition2.ingress()
+definition2.observe()
 
 dummy1 = Object.from_string(rid="dummy:1")
-dummy1.ingress()
+dummy1.observe()
 
 dummy2 = Object.from_string(rid="dummy:2")
-dummy2.ingress()
+dummy2.observe()
 
 undirected_rel = UndirectedRelation.create(
     name="Undirected",

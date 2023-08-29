@@ -16,7 +16,9 @@ class ConstructorAccessMetaClass(type):
         if cls == RID:
             return ()
         else:
-            return (cls.__name__, *cls.__base__.labels)
+            return (cls.__name__, 
+                    # *cls.__base__.labels
+                    )
     
     def __getattr__(cls, name):
         try:
