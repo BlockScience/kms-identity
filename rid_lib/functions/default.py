@@ -2,7 +2,7 @@ from ..core import function
 from ..means import Object
 from ..exceptions import *
 from .. import table
-import api
+from api import database
 
 @function(constructor=True)
 def from_string(cls, context):
@@ -39,24 +39,24 @@ def observe_from_string(cls, context):
 
 @function()
 def create_object(rid, context):
-    api.database.create_object(rid)
+    database.objects.create(rid)
 
     return rid.refresh()
 
 @function()
 def object_exists(rid, context):
-    return api.database.object_exists(rid)
+    return database.objects.exists(rid)
     
 @function()
 def read_object(rid, context):
-    return api.database.read_object(rid)
+    return database.objects.read(rid)
 
 @function()
 def refresh_object(rid, context):
     try:
         data = rid.dereference()
         if data:
-            api.database.refresh_object(rid, data)
+            database.objects.refresh(rid, data)
             return data
         else:
             print("Dereferencing object returned no data")

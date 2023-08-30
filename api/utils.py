@@ -1,24 +1,6 @@
 import functools, re, traceback
-import jsonschema
-from jsonschema.exceptions import ValidationError
-from fastapi import HTTPException, status
-from api.core import driver
-from api.config import NEO4J_DB
+from fastapi import HTTPException
 from api.exceptions import *
-
-def execute_read(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        with driver.session(database=NEO4J_DB) as session:
-            return session.execute_read(func, *args, **kwargs)
-    return wrapper
-
-def execute_write(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        with driver.session(database=NEO4J_DB) as session:
-            return session.execute_write(func, *args, **kwargs)
-    return wrapper
 
 def pass_exceptions(func):
     @functools.wraps(func)

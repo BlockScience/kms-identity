@@ -1,28 +1,28 @@
 from ..core import function
 from api.schema import *
-import api
+from api import database
 import nanoid
 
 @function(constructor=True, schema=UNDIRECTED_RELATION_SCHEMA)
 def create_undirected_relation(Means, context):
     rid = Means(nanoid.generate())
-    api.database.create_undirected_relation(rid, context)
+    database.relations.create_undirected(rid, context)
     return rid
 
 @function(constructor=True, schema=DIRECTED_RELATION_SCHEMA)
 def create_directed_relation(Means, context):
     rid = Means(nanoid.generate())
-    api.database.create_directed_relation(rid, context)
+    database.relations.create_directed(rid, context)
     return rid
     
 @function()
 def read_undirected_relation(rid, context):
-    return api.database.read_undirected_relation(rid)
+    return database.relations.read_undirected(rid)
 
 @function()
 def read_directed_relation(rid, context):
-    return api.database.read_directed_relation(rid)
+    return database.relations.read_directed(rid)
 
 @function()
 def delete_relation(rid, context):
-    api.database.delete_relation(rid)
+    database.relations.delete(rid)
