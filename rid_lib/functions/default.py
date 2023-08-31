@@ -16,7 +16,7 @@ from api import database
 })
 def from_string(cls, context):
     rid_str = context["rid"]
-    observe = context["rid"]
+    observe = context.get("observe", False)
     components = rid_str.split(":", 1)
 
     if len(components) != 2:
@@ -40,7 +40,7 @@ def from_string(cls, context):
         rid = cls(reference)
     else:
         raise UnsupportedMeansError(f"The 'from_string' constructor can only be called on '{cls.__name__}' when the RID string uses the '{cls.symbol}' means. To construct arbitrary RID strings, use the generic Object class.")
-    
+        
     if observe:
         rid.observe()
 

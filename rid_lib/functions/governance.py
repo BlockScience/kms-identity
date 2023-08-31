@@ -36,7 +36,7 @@ def create_governance(Means, context):
 def act(rid, context):
     agent_rid = context["as"]
     action_str = context["action"]
-    action_context = context.get("context", None)
+    action_context = context.get("context")
 
     gov_data = rid.read()
 
