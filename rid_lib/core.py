@@ -17,7 +17,7 @@ class ConstructorAccessMetaClass(type):
             return ()
         else:
             return (cls.__name__, 
-                    # *cls.__base__.labels
+                    *cls.__base__.labels
                     )
     
     def __getattr__(cls, name):

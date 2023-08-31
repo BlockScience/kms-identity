@@ -40,13 +40,15 @@ POST http://localhost:8000/object
 POST http://localhost:8000/object/
 
 {
-    "rid": "dir_asrt:IfnZRHc7ONwh6QCwx4Acb",
-    "action": "fork",
+    "rid": "und_asrt",
+    "action": "create",
     "context": {
-        "add": {
-            "to": ["test:one", "test:two"],
-            "from": ["test:three", "test:four"]
-        }
+        "name": "KOI Development Team",
+        "members": [
+            "agent:luke",
+            "agent:orion",
+            "agent:david"
+        ]
     }
 }
 

@@ -7,11 +7,11 @@ from rid_lib import RID
 def create_undirected(tx, rid: RID, params):
     # removes self edges
     member_rids = [m for m in params.pop("members", []) if m != rid.string]
+    definition_rid = params.pop("definition", None)
 
     create_object(tx, rid, params)
     create_edges(tx, rid, "HAS", member_rids)
 
-    definition_rid = params.get("definition", None)
     if definition_rid and (definition_rid != rid.string):
         set_definition(tx, rid, definition_rid)
 
@@ -20,12 +20,12 @@ def create_directed(tx, rid: RID, params):
     # removes self edges
     from_rids = [m for m in params.pop("from", []) if m != rid.string]
     to_rids = [m for m in params.pop("to", []) if m != rid.string]
+    definition_rid = params.pop("definition", None)
 
     create_object(tx, rid, params)
     create_edges(tx, rid, "FROM", from_rids)
     create_edges(tx, rid, "TO", to_rids)
 
-    definition_rid = params.get("definition", None)
     if definition_rid and (definition_rid != rid.string):
         set_definition(tx, rid, definition_rid)
 

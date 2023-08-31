@@ -12,7 +12,7 @@ router = APIRouter(
     prefix="/object"
 )
 
-@router.post("/")
+@router.post("")
 @pass_exceptions
 def generic_json_endpoint(data: dict):
     try:

@@ -9,7 +9,7 @@ import json
 def create_undirected(tx, rid: RID, params):
     json_data = json.dumps(params)
     member_rids = params.pop("members", [])
-    definition_rid = params.get("definition", None)
+    definition_rid = params.pop("definition", None)
 
     create_object(tx, rid, params)
     create_edges(tx, rid, "HAS", member_rids)
@@ -25,7 +25,7 @@ def create_directed(tx, rid: RID, params):
     json_data = json.dumps(params)
     from_rids = params.pop("from", [])
     to_rids = params.pop("to", [])
-    definition_rid = params.get("definition", None)
+    definition_rid = params.pop("definition", None)
 
     create_object(tx, rid, params)
     create_edges(tx, rid, "FROM", from_rids)
